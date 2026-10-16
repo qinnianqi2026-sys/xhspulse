@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RedPulse AI Studio · 小红书 AI 爆款图文全栈工作台</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<style>
+  :root {
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+  body {
+    font-family: var(--font-sans);
+    background-color: #090A0F;
+    color: #F3F4F6;
+    overflow-x: hidden;
+  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #11131A; }
+  ::-webkit-scrollbar-thumb { background: #2A2E3D; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #FF2442; }
+
+  .glass-panel {
+    background: rgba(18, 20, 28, 0.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .xhs-red { background-color: #FF2442; }
+  .xhs-red-text { color: #FF2442; }
+  .xhs-gradient { background: linear-gradient(135deg, #FF2442 0%, #FF5C77 100%); }
+
+  .slide-card {
+    width: 360px;
+    height: 480px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+    user-select: none;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  }
+  .slide-card [contenteditable="true"] {
+    outline: none;
+    cursor: text;
+    user-select: text;
+    border-radius: 4px;
+    transition: background-color 0.15s;
+  }
+  .slide-card [contenteditable="true"]:hover {
+    background-color: rgba(255, 36, 66, 0.08);
+  }
+  .slide-card [contenteditable="true"]:focus {
+    background-color: rgba(255, 36, 66, 0.14);
+    box-shadow: 0 0 0 1px rgba(255, 36, 66, 0.4);
+  }
+
+  .nowrap-lock {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  .pill-tag {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1.1 !important;
+    padding: 5px 10px !important;
+    border-radius: 6px !important;
+    vertical-align: middle !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+  .badge-circle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Theme 1: Magazine Cream */
+  .theme-magazine {
+    background-color: #FAF8F5;
+    color: #141413;
+    background-image: radial-gradient(#E5E0D8 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+  .theme-magazine .hl-mark {
+    background-color: #FDE047;
+    color: #111111;
+    padding: 1px 5px;
+    border-radius: 4px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  .theme-magazine .sub-box {
+    background: #FFFFFF;
+    border: 1.5px solid #141413;
+    box-shadow: 4px 4px 0px #141413;
+  }
+  .theme-magazine .pill-tag {
+    background: #141413;
+    color: #FAF8F5;
+  }
+  .theme-magazine .accent-color { color: #FF2442; }
+
+  /* Theme 2: Obsidian Gold */
+  .theme-obsidian {
+    background: linear-gradient(155deg, #121318 0%, #090A0D 60%, #191512 100%);
+    color: #F9FAFB;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+  }
+  .theme-obsidian .hl-mark {
+    background-color: rgba(245, 158, 11, 0.3);
+    color: #FDE68A;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .theme-obsidian .sub-box {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+  }
+  .theme-obsidian .pill-tag {
+    background: #F59E0B;
+    color: #090A0D;
+  }
+  .theme-obsidian .accent-color { color: #FBBF24; }
+
+  /* Theme 3: Klein Tech */
+  .theme-klein {
+    background: #002FA7;
+    color: #FFFFFF;
+    background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .theme-klein .hl-mark {
+    background: #CCFF00;
+    color: #002FA7;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .theme-klein .sub-box {
+    background: rgba(0, 18, 70, 0.65);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+  }
+  .theme-klein .pill-tag {
+    background: #CCFF00;
+    color: #001B66;
+  }
+  .theme-klein .accent-color { color: #CCFF00; }
+
+  /* Theme 4: Breaking Red */
+  .theme-breaking {
+    background: #FFFFFF;
+    color: #0F172A;
+    border-top: 10px solid #FF2442;
+  }
+  .theme-breaking .hl-mark {
+    background: #FFE4E6;
+    color: #E11D48;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .theme-breaking .sub-box {
+    background: #F8FAFC;
+    border: 1.5px solid #E2E8F0;
+    border-left: 4px solid #FF2442;
+  }
+  .theme-breaking .pill-tag {
+    background: #FF2442;
+    color: #FFFFFF;
+  }
+  .theme-breaking .accent-color { color: #FF2442; }
+
+  /* Theme 5: Cyber Neon */
+  .theme-cyber {
+    background: radial-gradient(circle at top right, #1E1B4B, #090D16 70%);
+    color: #F1F5F9;
+  }
+  .theme-cyber .hl-mark {
+    background: rgba(56, 189, 248, 0.25);
+    color: #38BDF8;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .theme-cyber .sub-box {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+  .theme-cyber .pill-tag {
+    background: #38BDF8;
+    color: #090D16;
+  }
+  .theme-cyber .accent-color { color: #38BDF8; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Top Navigation Bar -->
+  <header class="h-16 border-b border-white/10 bg-[#0C0E14]/90 backdrop-blur-md sticky top-0 z-50 px-6 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl xhs-gradient flex items-center justify-center shadow-lg shadow-rose-500/20 font-black text-white text-sm tracking-tighter">
+        RED
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="font-bold text-base tracking-tight text-white">RedPulse AI Studio</h1>
+          <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">2026-10-16 今日已更新</span>
+        </div>
+        <p class="text-[11px] text-slate-400">已同步今日海外 3 大突发猛料 · 自动建文件夹 + 序号命名导出</p>
+      </div>
+    </div>
+
+    <div class="hidden md:flex items-center bg-[#141722] p-1 rounded-xl border border-white/5 text-xs">
+      <button onclick="setMainTab('workspace')" id="tabBtnWorkspace" class="px-3.5 py-1.5 rounded-lg font-semibold bg-[#FF2442] text-white transition flex items-center gap-1.5">
+        <span>✨</span> 1. 爆款图文创作台
+      </button>
+      <button onclick="setMainTab('radar')" id="tabBtnRadar" class="px-3.5 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5">
+        <span>📡</span> 2. 实时全网情报池 (Live)
+      </button>
+      <button onclick="setMainTab('settings')" id="tabBtnSettings" class="px-3.5 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5">
+        <span>👤</span> 3. 账号水印与外观设置
+      </button>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button onclick="copyCompletePost()" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1">
+        <span>📋</span> 复制标题+正文
+      </button>
+      <button onclick="exportToDirectLocalFolder()" title="在 Chrome/Edge 中直接选本地目录生成文件夹" class="bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1">
+        <span>📂</span> 选目录直存文件夹
+      </button>
+      <button onclick="downloadAsFolderZip()" class="xhs-gradient hover:opacity-95 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-lg shadow-rose-600/25 transition flex items-center gap-1.5">
+        <span>📦</span> 打包下载专属文件夹 (含5图+文案)
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== VIEW 1: MAIN WORKSPACE ==================== -->
+  <main id="viewWorkspace" class="flex-1 max-w-[1600px] w-full mx-auto px-6 py-5 grid grid-cols-1 xl:grid-cols-12 gap-6">
+
+    <!-- Left Column (3 cols) -->
+    <div class="xl:col-span-3 flex flex-col gap-5">
+
+      <div class="glass-panel rounded-2xl p-4 flex flex-col gap-3 border-rose-500/30">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
+            <span class="text-rose-500">🔥</span> 10月16日今日最新成稿 (共4篇)
+          </h2>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">今日刚更</span>
+        </div>
+        <div class="space-y-2" id="presetScenariosList"></div>
+      </div>
+      
+      <div class="glass-panel rounded-2xl p-4 flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+            <span>🎯</span> 或者：粘贴任意素材即时改写
+          </h2>
+          <button onclick="setMainTab('radar')" class="text-[11px] text-rose-400 hover:underline font-medium">去实时热榜抓新帖 ➔</button>
+        </div>
+
+        <div>
+          <label class="text-[11px] text-slate-400 block mb-1">选题核心事件 / 关键词</label>
+          <input id="inputTopicTitle" type="text" class="w-full bg-[#0B0D13] border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500" placeholder="例如：Meta与苹果联手 / 菲尔兹奖得主感叹...">
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-[11px] text-slate-400">原始素材（推文 / 访谈字幕 / Reddit 帖）</label>
+            <button onclick="clearSourceInput()" class="text-[10px] text-slate-500 hover:text-slate-300">清空</button>
+          </div>
+          <textarea id="inputRawText" rows="3" class="w-full bg-[#0B0D13] border border-white/10 rounded-xl p-2.5 text-xs text-slate-200 placeholder-slate-500 leading-relaxed focus:outline-none focus:border-rose-500"></textarea>
+        </div>
+
+        <button id="btnGenerateAll" onclick="generateFullPost()" class="w-full bg-white/10 hover:bg-white/15 border border-white/15 text-white font-bold text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-2">
+          <span>⚡</span>
+          <span id="btnGenerateText">用上方自定义素材重新生成 5 图 + 长文</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Center Column (4 cols) -->
+    <div class="xl:col-span-4 flex flex-col gap-5">
+      <div class="glass-panel rounded-2xl p-5 flex flex-col h-full">
+        
+        <div class="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
+          <div>
+            <h2 class="text-sm font-bold text-white flex items-center gap-2">
+              <span>📝</span> 第二步：确认标题与正文
+            </h2>
+            <p class="text-[11px] text-slate-400 mt-0.5">导出文件夹时会自动生成 `00_小红书标题与正文.txt`</p>
+          </div>
+          <button onclick="copyCompletePost()" class="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-xs font-bold transition flex items-center gap-1.5">
+            <span>📋</span> 一键复制标题+正文
+          </button>
+        </div>
+
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="text-xs font-semibold text-slate-300">1. 点选最抓人的标题（同时作为导出文件夹名称）：</label>
+            <span id="titleCharCount" class="text-[11px] font-mono text-emerald-400">18 / 20字 (合规)</span>
+          </div>
+          <div id="titleMatrixList" class="space-y-1.5 mb-2"></div>
+          <input id="activeTitleInput" oninput="onActiveTitleEdit(this.value)" type="text" class="w-full bg-[#0B0D13] border border-rose-500/40 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-rose-500">
+        </div>
+
+        <div class="flex-1 flex flex-col">
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="text-xs font-semibold text-slate-300">2. 深度网感正文（可自由增删修改）：</label>
+            <div class="flex items-center gap-2">
+              <span id="bodyWordCount" class="text-[11px] text-slate-400 font-mono">0 字</span>
+              <button onclick="polishCopyFormat()" class="text-[11px] px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-slate-300 transition">✨ 自动空行排版</button>
+            </div>
+          </div>
+          <textarea id="articleBodyInput" oninput="updateWordCount()" class="flex-1 min-h-[400px] w-full bg-[#0B0D13] border border-white/10 rounded-xl p-4 text-[13px] text-slate-100 leading-relaxed focus:outline-none focus:border-rose-500 resize-none"></textarea>
+        </div>
+
+        <div class="mt-3 pt-3 border-t border-white/10">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[11px] text-slate-400">点击追加热门标签：</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="appendTag('#AI新知')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#AI新知</button>
+            <button onclick="appendTag('#人工智能')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#人工智能</button>
+            <button onclick="appendTag('#科技前沿')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#科技前沿</button>
+            <button onclick="appendTag('#硅谷最新动态')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#硅谷最新动态</button>
+            <button onclick="appendTag('#开源大模型')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#开源大模型</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right Column (5 cols) -->
+    <div class="xl:col-span-5 flex flex-col gap-5">
+      <div class="glass-panel rounded-2xl p-5 flex flex-col h-full">
+        
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-4 border-b border-white/10">
+          <div>
+            <h2 class="text-sm font-bold text-white flex items-center gap-2">
+              <span>🎨</span> 第三步：预览并导出文件夹
+            </h2>
+            <p class="text-[11px] text-slate-400 mt-0.5" id="folderNamePreview">导出文件夹名预览：2026-10-16_活久见Meta苹果突然联手</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <label class="cursor-pointer px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-200 flex items-center gap-1.5 transition">
+              <span>🖼️ 插入配图/截图</span>
+              <input type="file" accept="image/*" class="hidden" onchange="handleSlideImageUpload(event)">
+            </label>
+            <button onclick="downloadCurrentSlide()" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold transition">
+              仅下载当前页
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 mb-4 bg-[#0B0D13] p-2 rounded-xl border border-white/5">
+          <span class="text-[11px] text-slate-400 pl-1">切换配色皮肤：</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="setSlideTheme('theme-magazine')" class="theme-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-amber-50 text-stone-900 border border-stone-400">📖 白底杂志风 (最推荐)</button>
+            <button onclick="setSlideTheme('theme-obsidian')" class="theme-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-neutral-900 text-amber-300 border border-amber-500/40">🖤 硅谷黑金</button>
+            <button onclick="setSlideTheme('theme-klein')" class="theme-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#002FA7] text-lime-300 border border-blue-400/40">⚡ 克莱因蓝</button>
+            <button onclick="setSlideTheme('theme-breaking')" class="theme-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-rose-600 text-white">🚨 突发红白报</button>
+            <button onclick="setSlideTheme('theme-cyber')" class="theme-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-indigo-950 text-sky-300 border border-sky-400/40">🌌 极客霓虹</button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex gap-1.5" id="slidePageTabs">
+            <button onclick="switchSlidePage(0)" class="slide-tab px-3 py-1.5 rounded-lg text-xs font-bold bg-[#FF2442] text-white">P1 视觉封面</button>
+            <button onclick="switchSlidePage(1)" class="slide-tab px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-slate-400 hover:text-white">P2 情报原贴</button>
+            <button onclick="switchSlidePage(2)" class="slide-tab px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-slate-400 hover:text-white">P3 核心拆解</button>
+            <button onclick="switchSlidePage(3)" class="slide-tab px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-slate-400 hover:text-white">P4 深度对比</button>
+            <button onclick="switchSlidePage(4)" class="slide-tab px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-slate-400 hover:text-white">P5 行动建议</button>
+          </div>
+          <span class="text-[11px] text-slate-400">可逐页点击查看</span>
+        </div>
+
+        <div class="flex-1 flex flex-col items-center justify-center bg-[#07080C] rounded-2xl p-6 border border-white/5 relative overflow-hidden">
+          <div id="slidesContainer" class="flex items-center justify-center"></div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==================== VIEW 2: LIVE AI RADAR ==================== -->
+  <section id="viewRadar" class="hidden flex-1 max-w-[1600px] w-full mx-auto px-6 py-6">
+    <div class="glass-panel rounded-2xl p-6">
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-5 mb-6 border-b border-white/10">
+        <div>
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <span>📡</span> 全网 AI 实时情报雷达 (Live Multi-Source Feed)
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">实时直连 Hacker News 与 Reddit AI 社区，拉取此时此刻全球最新的讨论</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <input id="radarSearchQuery" type="text" value="AI OR LLM OR Agent OR Muse" class="w-72 bg-[#0B0D13] border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
+          <select id="radarSourceSelect" class="bg-[#0B0D13] border border-white/15 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none">
+            <option value="hn_new">Hacker News (最新按时间排序)</option>
+            <option value="hn_hot">Hacker News (AI 热门讨论)</option>
+            <option value="reddit_localllama">Reddit r/LocalLLaMA (开源模型玩家)</option>
+            <option value="reddit_singularity">Reddit r/singularity (前沿突破与热议)</option>
+            <option value="reddit_ai">Reddit r/ArtificialIntelligence</option>
+          </select>
+          <button onclick="fetchLiveRadar()" class="xhs-gradient text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1.5">
+            <span>🔄</span> 立即抓取实时热点
+          </button>
+        </div>
+      </div>
+
+      <div id="liveRadarStatus" class="text-xs text-slate-400 mb-4">正在准备连接实时数据源...</div>
+      <div id="liveRadarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+  </section>
+
+  <!-- ==================== VIEW 3: BRAND SETTINGS ==================== -->
+  <section id="viewSettings" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-6">
+    <div class="glass-panel rounded-2xl p-6 space-y-6">
+      <div class="border-b border-white/10 pb-4">
+        <h2 class="text-lg font-bold text-white">👤 小红书账号水印与头像配置</h2>
+        <p class="text-xs text-slate-400 mt-1">修改后保存，5 张图底部会自动同步你的名字与小头像</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-4 bg-[#0B0D13] p-5 rounded-2xl border border-white/5">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <span>🏷️</span> 你的小红书个人印记
+          </h3>
+          <div>
+            <label class="text-xs text-slate-300 block mb-1">你的小红书账号名称（自动单行锁定，绝不换行）</label>
+            <input id="cfgAuthorName" type="text" value="akia" class="w-full bg-[#12151E] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
+          </div>
+          <div>
+            <label class="text-xs text-slate-300 block mb-1">底部小圆标（可上传像素头像，不传则显示名字首字母 A）</label>
+            <div class="flex items-center gap-3 mt-1">
+              <label class="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-xs text-white transition">
+                📂 上传头像图片
+                <input type="file" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
+              </label>
+              <button onclick="clearAvatar()" class="text-xs text-slate-400 hover:text-rose-400">恢复首字母圆标</button>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs text-slate-300 block mb-1">底部右侧签名</label>
+            <input id="cfgAuthorBio" type="text" value="外网搬运 ｜ AI八卦 ｜ 工具推荐" class="w-full bg-[#12151E] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
+          </div>
+          <div>
+            <label class="text-xs text-slate-300 block mb-1">卡片顶部期刊栏名称</label>
+            <input id="cfgIssueTag" type="text" value="OVERSEAS AI · 外网一手资讯" class="w-full bg-[#12151E] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
+          </div>
+          <div class="pt-2">
+            <button onclick="saveSettings()" class="w-full xhs-gradient text-white text-xs font-bold py-2.5 rounded-xl shadow-lg transition">
+              💾 保存我的账号印记并返回创作台
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Toast Notification -->
+  <div id="toastBox" class="fixed bottom-6 right-6 z-50 hidden px-4 py-3 rounded-xl bg-slate-900/95 border border-rose-500/50 text-white text-xs font-semibold shadow-2xl flex items-center gap-2">
+    <span class="text-rose-400">✨</span>
+    <span id="toastMsg">操作成功</span>
+  </div>
+
+<script>
+  let currentAngle = 'insight';
+  let currentTheme = 'theme-magazine';
+  let activeSlideIndex = 0;
+  let uploadedSlideImages = {};
+
+  const SLIDE_ROLE_NAMES = ['封面', '原帖', '拆解', '对比', '建议'];
+
+  const brandConfig = {
+    authorName: localStorage.getItem('rp_authorName') || 'akia',
+    authorBio: localStorage.getItem('rp_authorBio') || '外网搬运 ｜ AI八卦 ｜ 工具推荐',
+    issueTag: localStorage.getItem('rp_issueTag') || 'OVERSEAS AI · 外网一手资讯',
+    avatarDataUrl: localStorage.getItem('rp_avatarDataUrl') || ''
+  };
+
+  // ==================== TODAY'S FRESH STORIES (2026-10-16) ====================
+  const presetScenarios = [
+    {
+      id: 'oct16-meta-apple-muse',
+      category: '🚨 今日头版突发 · 10月16日刚爆',
+      badge: 'HN 798赞 · 苹果Meta罕见联手',
+      topicTitle: '活久见！Meta突然开源8160亿大模型，还和死对头苹果联手了',
+      sourceMeta: 'Hacker News 今日榜首 (798赞/399评) & Meta AI 官方',
+      rawSnippet: 'Meta releases Muse Spark Open (816B total / 42B active MoE, 1M context window, multimodal agentic coding model) and partners with longtime rival Apple so it can run locally on consumer M5 Ultra Mac Studios using Apple MLX.',
+      titles: [
+        '活久见！Meta和死对头苹果居然联手搞AI了',
+        'Meta刚开源8160亿巨无霸！Mac直接本地跑',
+        '外网炸锅！扎克伯格联手苹果放出最强开源王炸',
+        '不用租天价显卡了！8000亿大模型搬上办公桌'
+      ],
+      slides: [
+        {
+          type: 'cover',
+          tag: '10.16 硅谷突发王炸',
+          headline: '活久见！Meta 突然开源 8160亿大模型，还和<span class="hl-mark">死对头苹果</span>联手了',
+          subhead: 'Hacker News 狂飙 800 赞：扎克伯格与库克世纪破冰，把顶级大模型直接塞进 Mac 桌面！',
+          footerMetric: '大白话总结：以前得靠机房跑的巨无霸模型，现在放办公桌上就能断网跑了'
+        },
+        {
+          type: 'quote',
+          tag: '01 / 外网今日头条原话',
+          sourceTitle: 'Meta AI & Dealroom 突发快讯',
+          sourceTime: 'Oct 16, 2026 · HN 798 赞',
+          enText: '"Apple and Meta bury the hatchet so Muse Spark Open (816B total / 42B active, 1M context) can run on your desk—engineered for Apple M5 Ultra Mac Studios via MLX."',
+          cnHighlight: '💡 大白话翻译：Meta 和多年的老冤家苹果居然一笑泯恩仇了！Meta 今天刚开源的旗舰大模型 Muse Spark Open（总参数 8160 亿，激活参数 420 亿，100万上下文），专门针对苹果 M5 Ultra 的 MLX 框架做了深度适配，在办公桌上就能本地跑。',
+          takeaway: '吃瓜看点：这俩公司平时天天互怼，为了干翻云端闭源巨头居然抱团了。'
+        },
+        {
+          type: 'points',
+          tag: '02 / 这次发布的 3 个硬核看点',
+          title: 'Muse Spark Open 到底猛在哪？',
+          items: [
+            { num: '01', name: '8160 亿总参数，但只用 420 亿的算力开销', desc: '用了混合专家（MoE）设计，脑容量极大但干活极省电，支持 100 万超长上下文与看图听音。' },
+            { num: '02', name: '专门针对“自动写代码与长任务”打磨', desc: '不搞花架子闲聊，直接瞄准复杂软件工程、多步推理和自己调工具干活的 Agent 场景。' },
+            { num: '03', name: '吃透苹果统一内存，摆脱天价英伟达机房', desc: '单台 M5 Ultra 可调用 512GB 统一内存，两到四台 Mac Studio 串起来就能把满血大模型装进本地。' }
+          ]
+        },
+        {
+          type: 'compare',
+          tag: '03 / 算笔实在账',
+          title: '以前跑顶级大模型 vs 现在的桌面方案',
+          leftTitle: '💸 以前的玩法（企业机房专属）',
+          leftItems: [
+            '得买几十万美金的英伟达服务器机柜',
+            '或者每月交高昂的云端 API 账单',
+            '公司核心代码和隐私数据全得传给外人'
+          ],
+          rightTitle: '🍎 现在的玩法（Mac 桌面本地流）',
+          rightItems: [
+            '两三台桌面 Mac Studio 就能本地跑满血 816B',
+            '一次买断硬件，后续 24 小时狂刷零 API 费',
+            '拔掉网线也能用，代码与商业机密 100% 不出门'
+          ]
+        },
+        {
+          type: 'action',
+          tag: '04 / 对普通人的实在启发',
+          title: '神仙打架，咱们普通人看什么门道？',
+          steps: [
+            '开源模型越卷，咱们平时用的 AI 工具和 API 价格就会被砸得越便宜',
+            '如果你手里正好用的是 Mac（M系列芯片），本地跑开源小模型是最舒服的免费福利',
+            '编程和自动化 Agent 已经是所有大厂死磕的第一主战场，早用早省事'
+          ],
+          ctaQuestion: '💬 聊聊：Meta 和苹果这次罕见联手，你觉得能动摇英伟达和 OpenAI 吗？'
+        }
+      ],
+      articleBody: `今天（10月16日）一早刷外网，硅谷最大的突发新闻直接把 Hacker News 和 Reddit 屠榜了——
+常年互相看不顺眼的扎克伯格（Meta）和库克（苹果），居然为了开源大模型罕见联手了！
+
+Meta 今天正式放出了号称“全美最强开源权重模型”的 **Muse Spark Open**，短短十几小时在 Hacker News 狂砍近 800 赞、400 条评论。我把官方技术博客和外媒拆解顺了一遍，用大白话给大家划个重点：
+
+📌 一、 这头 8160 亿参数的巨兽是个啥来头？
+
+简单看三个最猛的指标：
+1️⃣ **大腦容量大，但干活不费力**：总参数高达 816B（8160亿），但用了 MoE 架构，每次说话只激活 42B（420亿）参数。
+2️⃣ **天生全能**：支持 100 万 Token 的超长记忆窗口，文字、图片、视频、音频全能直接喂进去。
+3️⃣ **专攻写代码与自动干活**：官方直接挑明了，这模型就是冲着复杂软件工程和长流程 Agent 去的。
+
+💡 二、 为什么偏偏找死对头“苹果”合作？
+
+这才是今天外网讨论最热烈的地方！
+以前像 8000 亿参数这种级别的模型，普通团队想跑起来，非得去买天价的英伟达服务器机柜不可。
+结果这次 Meta 专门和苹果工程团队合作，用苹果自家的 MLX 框架吃透了 **M5 Ultra Mac Studio** 的统一内存架构（单台最高可调动 512GB 内存）。
+
+这意味着什么？
+只要把 2 到 4 台巴掌大的 Mac Studio 摆在办公桌上连起来，就能凑齐 1TB 内存，直接把这头 8160 亿参数的顶级模型**完完整整装在自己桌面上跑**，彻底不看云厂商的脸色！
+
+📌 三、 这事对咱们普通人有啥影响？
+
+▪️ **白嫖党狂喜**：开源巨头的每一次掀桌子，都会逼着收费软件降价。
+▪️ **Mac 用户含金量还在涨**：苹果统一内存跑本地 AI 的路子算是彻底走通了，就算咱们不跑 8000 亿的巨无霸，平时拿自己的 MacBook 跑个中等开源模型也越来越丝滑。
+
+核心参数和前因后果我都整理在上面 5 张卡片里了，左滑就能看全貌！
+
+👇 评论区聊聊：你觉得未来 AI 是像水电一样走云端，还是每个人电脑里自己装一个？
+
+#Meta #苹果Mac #开源大模型 #硅谷最新动态 #外网搬运 #AI新知 #科技吃瓜`
+    },
+    {
+      id: 'oct16-mathematicians-weep',
+      category: '💔 今日外网热议 · 600楼深度长文',
+      badge: 'HN 593评 · 菲尔兹奖得主破防',
+      topicTitle: '外网600楼泪目热议：《我知道数学家为何落泪》，菲尔兹奖得主坦言领域被AI夷平',
+      sourceMeta: 'Derek Thompson 10月15日专栏 & Hacker News 593评热帖',
+      rawSnippet: '"I Know Why the Mathematicians Weep" by Derek Thompson (Oct 15, 2026, 593 comments on HN). In recent months OpenAI published hundreds of math findings. 2022 Fields Medalist Hugo Duminil-Copin said: "They have annihilated my field of research."',
+      titles: [
+        '外网600楼破防：我知道数学家为什么哭了',
+        '菲尔兹奖得主坦言：AI把我的研究领域夷平了',
+        '当AI瞬间解出百年难题，人类还剩什么？',
+        '今日外网最火长文：什么是“技术性悲伤”？'
+      ],
+      slides: [
+        {
+          type: 'cover',
+          tag: '10.16 外网刷屏深度长文',
+          headline: '菲尔兹奖得主破防：AI 彻底<span class="hl-mark">夷平了</span>我的研究领域',
+          subhead: '外网 600 楼深夜长叹《我知道数学家为何落泪》：当机器批量解出难题，人类为何感到悲伤？',
+          footerMetric: '核心共鸣：我们难过的不是机器变聪明，而是苦思冥想的乐趣被剧透了'
+        },
+        {
+          type: 'quote',
+          tag: '01 / 震动全网的一句话',
+          sourceTitle: 'Hugo Duminil-Copin (2022菲尔兹奖得主)',
+          sourceTime: 'Quoted by Derek Thompson · Oct 15',
+          enText: '"In the last few months, AI has stunned the mathematical community with hundreds of findings. As Fields Medalist Hugo Duminil-Copin put it: \'They have annihilated my field of research.\'"',
+          cnHighlight: '💡 大白话翻译：过去几个月，AI 连续甩出几百项全新的数学证明，直接把整个数学圈砸懵了。2022 年数学最高奖菲尔兹奖得主直接感叹了一句：“他们把我的整个研究领域给夷平（终结）了。”',
+          takeaway: '扎心瞬间：寒窗苦读二十年刚走到山脚，抬头发现直升机已经把山顶占满了。'
+        },
+        {
+          type: 'points',
+          tag: '02 / 600楼在争论什么？',
+          title: '第一次被摆上台面的词：“技术性悲伤”',
+          items: [
+            { num: '01', name: '像极了当年围棋界看到 AlphaGo 的那一刻', desc: '以前大家以为只有画画写字会被冲击，没想到最讲纯粹逻辑的数学皇冠，反而被攻克得最彻底。' },
+            { num: '02', name: '人类真正在乎的是“解谜的过程”而非答案', desc: '就像你玩侦探游戏正起劲，旁边突然有人把凶手和全部线索直接拍在你脸上，成就感瞬间归零。' },
+            { num: '03', name: '从“亲自推导的人”变成“给机器审卷子的人”', desc: '学者们发现自己每天的工作不再是灵光一现，而是核对机器吐出来的几千页证明对不对。' }
+          ]
+        },
+        {
+          type: 'compare',
+          tag: '03 / 评论区两派吵翻',
+          title: '悲观派 vs 乐观派的激烈交锋',
+          leftTitle: '🥀 悲观派（像被剥夺了意义的工匠）',
+          leftItems: [
+            '苦练十几年手艺，突然发现毫无用武之地',
+            'AI 给出的证明虽然对，但冷冰冰没有人类美感',
+            '年轻人不知道还该不该去读枯燥的基础学科'
+          ],
+          rightTitle: '🔭 乐观派（望远镜发明后的天文学家）',
+          rightItems: [
+            '以前一辈子算一道题，现在可以站在 AI 肩上看全貌',
+            '把算题留给机器，人类去攻克癌症、材料和物理',
+            '人类大脑的适应力永远比想象中更强'
+          ]
+        },
+        {
+          type: 'action',
+          tag: '04 / 普通人的心理按摩',
+          title: '当 AI 啥都比人快，咱们怎么自处？',
+          steps: [
+            '把“干活赚钱”和“个人热爱”分开：干活用最猛的 AI 偷懒，爱好留给自己慢慢手搓',
+            '别去跟推土机比力气，去学怎么开推土机（成为最懂怎么向 AI 提问的人）',
+            '就算电脑下国际象棋赢了人类三十年，今天全世界的棋迷反而比以前更多了'
+          ],
+          ctaQuestion: '💬 聊聊：如果有一天 AI 把你最拿手的本事秒杀了，你会觉得失落还是解脱？'
+        }
+      ],
+      articleBody: `今天（10月16日）外网讨论度最高、最让人心里五味杂陈的一篇文章，是知名专栏作家 Derek Thompson 刚发的长文——《I Know Why the Mathematicians Weep》（我知道数学家为何落泪）。
+
+这篇帖子在 Hacker News 上短短十几个小时就盖了将近 600 楼。
+
+事情的起因是，最近几个月 OpenAI 连续放出了几百项由 AI 独立攻克的数学新发现。面对这种压倒性的速度，2022 年菲尔兹奖（数学界诺贝尔奖）得主 Hugo Duminil-Copin 说了一句让所有人破防的话：
+> “They have annihilated my field of research.”（他们彻底夷平了我的研究领域。）
+
+📌 一、 什么是“技术性悲伤（Technological Grief）”？
+
+以前我们聊 AI，聊的总是“会不会抢饭碗”、“怎么搞钱提效”。
+但这篇长文聊了一个更扎心的话题：当一个人花了二十年青春、熬秃了头皮才终于摸到人类知识边界的门槛，结果转头发现，一台机器用十分钟就把前面几百座山头全推平了——哪怕你不愁吃穿，那种“我存在的价值是什么”的空虚感，才是最让人落泪的。
+
+有网友在评论区打了个特别绝的比方：
+“这就像你正津津有味地解一道憋了三天的拼图，结果走过来一个人，一巴掌把整幅图直接拍好在你面前。拼图确实完成了，但你的快乐也被毁了。”
+
+💡 二、 600 楼评论区里最通透的 2 个观点
+
+虽然一开始大家都在感慨，但高赞区很快涌现出非常精彩的反思：
+
+1️⃣ **看看国际象棋和围棋就知道了**
+当年深蓝赢了卡斯帕罗夫、AlphaGo 赢了李世石的时候，大家都以为棋类运动要亡了。结果呢？到了今天，全世界学棋、看棋的人反而比历史上任何时候都多！因为大家看的是“人与人的较量”和“自己动脑的乐趣”，谁会去跟汽车比跑步呢？
+
+2️⃣ **望远镜没有杀死天文学家**
+用肉眼看星星的时代结束了，但拿着天文望远镜的人类，看到了以前做梦都看不到的深空星系。
+
+我把这篇文章的核心金句和正反交锋整理在上面 5 张图里了，特别适合静下心来翻一翻。
+
+👇 评论区聊聊：如果 AI 一秒钟就能干完你苦练好几年的手艺，你的第一反应是失落，还是爽快躺平？
+
+#外网热议 #人工智能 #深度思考 #数学家 #OpenAI #科技人文 #大实话`
+    },
+    {
+      id: 'oct16-nvidia-china-open',
+      category: '🔥 今日硬核榜单 · 10月16日刚出',
+      badge: '英伟达发新模型 · 中国开源领跑',
+      topicTitle: '英伟达连夜放出全美第一开源大模型！但评测机构坦言：还是打不过中国开源',
+      sourceMeta: 'Artificial Analysis 10月15~16日最新全球评测报告',
+      rawSnippet: 'NVIDIA releases Nemotron 3.5 Super VL (120B/12B, 630 tokens/s, scoring 26.5) as the leading US open weight model. Yet Artificial Analysis notes: "Despite the advance, the US still trails China (MiMo-V2.6-Pro at 46, DeepSeek V4 Pro, Kimi K3, GLM-5.2) on open weights intelligence."',
+      titles: [
+        '英伟达刚夺全美开源第一！但还是打不过中国？',
+        '1秒狂吐630个字！英伟达最新大模型实测来了',
+        '外网权威榜单更新：开源大模型中国依然断层领跑',
+        '智商翻倍还省60%算力！老黄这次真下血本了'
+      ],
+      slides: [
+        {
+          type: 'cover',
+          tag: '10.16 全球大模型最新战报',
+          headline: '英伟达刚拿下全美开源第一！评测却说：还是<span class="hl-mark">追不上中国</span>',
+          subhead: 'Artificial Analysis 今日最新榜单：老黄连夜甩出 Nemotron 3.5，评论区却被中国模型刷屏了',
+          footerMetric: '核心看点：英伟达把吐字速度飙到了每秒 630 字，但智商分依然被中国军团压制'
+        },
+        {
+          type: 'quote',
+          tag: '01 / 权威评测报告原话',
+          sourceTitle: 'Artificial Analysis 全球基准报告',
+          sourceTime: 'Oct 15-16, 2026 · 实测数据',
+          enText: '"Nemotron 3.5 Super VL is the highest-scoring open weights model from the US at 26.5 (reaching 630 tokens/s). Despite the advance, the US still trails China (scoring 46) on open weights intelligence."',
+          cnHighlight: '💡 大白话翻译：英伟达刚发的 Nemotron 3.5 Super 拿到了 26.5 分，终于坐上“美国本土开源第一”的宝座（吐字速度高达恐怖的每秒 630 个词）。但报告紧接着补了一刀：即便如此，美国开源模型的智商依然大幅落后于中国开源军团（46分）。',
+          takeaway: '真实格局：闭源看硅谷，但开源大模型这块，中国团队现在真是天花板。'
+        },
+        {
+          type: 'points',
+          tag: '02 / 老黄这次交出了什么成绩？',
+          title: '英伟达新模型 Nemotron 3.5 的 3 个绝活',
+          items: [
+            { num: '01', name: '快到飞起：每秒狂吐 630 个 Token', desc: '在 10 万字超长提示词下，首字响应只要 1.8 秒，输出速度是同级模型的 3 到 5 倍。' },
+            { num: '02', name: '智商翻倍，废话却少了 60%', desc: '比上一代聪明了一倍，但做完同样一道题消耗的思考词数直接砍掉了六成，极其省钱。' },
+            { num: '03', name: '附赠小钢炮：74B 参数追平以前 550B 巨兽', desc: '同时发布的 Bolt 版本体积只有老旗舰的七分之一，跑自动化任务反而更准。' }
+          ]
+        },
+        {
+          type: 'compare',
+          tag: '03 / 2026 全球开源战力横评',
+          title: '美国开源尖子生 vs 中国开源主力军',
+          leftTitle: '🇺🇸 美国开源代表（英伟达 / Meta）',
+          leftItems: [
+            'Nemotron 3.5 Super 刚冲到 26.5 分',
+            '主打极致推理速度与自家显卡硬件绑定',
+            '大多数美国顶级实验室依然死守闭源收费'
+          ],
+          rightTitle: '🇨🇳 中国开源军团（DeepSeek / 小米 / Kimi / 智谱）',
+          rightItems: [
+            '智商指数冲上 46 分，断层领先美国开源同行',
+            'DeepSeek V4、MiMo-V2.6、Kimi K3、GLM-5.2 百花齐放',
+            '连硅谷程序员每天写代码查漏洞都在偷偷用'
+          ]
+        },
+        {
+          type: 'action',
+          tag: '04 / 咱们平时怎么选模型？',
+          title: '看完最新榜单，给你 3 条实用选型建议',
+          steps: [
+            '日常中文写作、长文总结、代码查错：直接用国产主力模型，又便宜又懂中文语境',
+            '需要极速批量处理十几万字英文资料：可以去试一下英伟达刚开的 630 token/s 高速接口',
+            '别迷信外网月亮圆，现在连海外评测机构都得拿国产开源模型当标杆对比了'
+          ],
+          ctaQuestion: '💬 聊聊：你现在日常用得最顺手的国产 AI 模型是哪一家？'
+        }
+      ],
+      articleBody: `全球最权威的大模型独立评测机构 Artificial Analysis 刚刚（10月15~16日）更新了最新一期的开源大模型战报。
+
+这次的主角本来是英伟达（NVIDIA）连夜发布的王牌开源模型 **Nemotron 3.5 Super** 和 **Bolt**。老黄这次确实下了狠功夫，一举拿下了“全美开源模型第一名”。
+
+但整篇评测报告读下来，最让人感慨的反而是报告里冷不丁写出的一句大实话：
+> “尽管英伟达取得了明显进步（26.5分），但在开源大模型的绝对智商榜单上，美国依然大幅落后于中国（46分）。”
+
+📌 一、 先客观夸夸：英伟达这次把“速度”卷到了极致
+
+虽然总分没追上中国同行，但老黄在自己最擅长的硬件加速上秀了一把肌肉：
+1️⃣ **1秒狂吐 630 个 Token**：在喂了 10 万字超长背景的情况下，首字反应只要 1.8 秒，吐字速度是同级别模型的 3~5 倍，基本上你刚按回车，几千字就刷出来了。
+2️⃣ **少说废话省大钱**：智商比上一代翻了一倍，但解题消耗的 Token 数量反而减少了 60%。
+
+💡 二、 为什么在开源领域，中国模型能断层领跑？
+
+看一眼这次报告里顺带提到的名字就明白了：
+当美国那几家头部大厂把最聪明的大脑全锁在每个月 20~200 美金的闭源黑盒里时，中国的团队（从报告里提到的 MiMo-V2.6-Pro、DeepSeek V4 Pro，到 Kimi K3、Qwen3.8、GLM-5.2）几乎把最顶级的模型全拿出来开源了。
+
+甚至这两天在 Hacker News 评论区里，好多硅谷本土程序员都在聊自己团队怎么用中国开源模型在本地跑代码审计。
+
+📌 三、 普通用户的实在红利
+
+不管神仙怎么打架，对咱们普通人来说就一个字：**爽**。
+以前用最顶尖的 AI 还得翻山越岭绑海外卡，现在国内随便打开一个模型，无论是写材料、理逻辑还是写代码，实力都已经站在全球第一梯队了。
+
+最新榜单对比和核心数据我都整理在上面 5 张卡片里了，左滑直接看干货！
+
+👇 评论区投个票：你现在手机或电脑上打开频率最高的是哪家 AI？
+
+#英伟达 #开源大模型 #DeepSeek #国产AI #科技前沿 #外网评测 #人工智能`
+    },
+    {
+      id: 'breaking-oct14-coding',
+      category: '💬 硅谷程序员热议 · 300楼大实话',
+      badge: 'HackerNews 359赞',
+      topicTitle: '外网吵翻了！AI 编程制造了更多代码，却没造出更多好软件',
+      sourceMeta: 'Hacker News 热门讨论 & Ars Technica',
+      rawSnippet: 'AI coding agents generate more code, but not more software (359 points, 299 comments). Engineers point out: "People on my team spend 10% of their time writing code and 90% doing design and analysis."',
+      titles: [
+        '外网吵翻！AI写代码越快，软件反而越慢？',
+        '硅谷300楼激辩：AI编程最大的谎言被戳破',
+        '别被AI写代码骗了！一线工程师说出大实话',
+        '代码量暴涨10倍，为什么好产品却没变多？'
+      ],
+      slides: [
+        {
+          type: 'cover',
+          tag: '外网高赞大实话',
+          headline: '外网吵翻！AI 造出了海量代码，却没造出<span class="hl-mark">更多好软件</span>',
+          subhead: 'Hacker News 盖楼 300 条：为什么老板幻想的“开发效率翻倍”在现实中撞墙了？',
+          footerMetric: '大白话总结：写代码只占 10% 的时间，剩下 90% 的改 Bug 和架构全成了新债'
+        },
+        {
+          type: 'quote',
+          tag: '01 / 高赞原话还原',
+          sourceTitle: 'Hacker News 热帖 · 一线技术主管评论',
+          sourceTime: '359 赞 / 299 评',
+          enText: '"Leadership expects velocity to double with AI. My team spends 10% of time writing code and 90% doing design and analysis. Doubling typing speed only makes us 5% faster—while review debt explodes."',
+          cnHighlight: '💡 大白话翻译：老板指望靠 AI 让开发速度翻倍，纯属外行。我们团队只有 10% 的时间在敲代码，90% 的时间在做设计和排错。哪怕打字速度翻倍，整体也就快 5%，反而审代码的活累死人。',
+          takeaway: '扎心真相：AI 解决的是最不卡脖子的“打字”，却放大了“改 Bug”的痛苦。'
+        },
+        {
+          type: 'points',
+          tag: '02 / 300楼争论的 3 个重点',
+          title: '为什么“更多代码 ≠ 更多好软件”？',
+          items: [
+            { num: '01', name: '10秒生成 1000 行，却要花 3 小时找隐蔽 Bug', desc: 'AI 很擅长写出“看起来能跑”的代码，但各种奇葩报错和安全漏洞全得靠人一行行擦屁股。' },
+            { num: '02', name: '代码越多越难维护，解决问题才算数', desc: '好软件的核心是逻辑简单清晰，AI 随手堆出来的几千行废话代码，过两周连亲妈都看不懂。' },
+            { num: '03', name: '硅谷新玩法：用另一个 AI 专门挑刺', desc: '评论区透露不少团队正用 Kimi K3 等模型先给 AI 写的代码做第一轮找茬，人再做最后把关。' }
+          ]
+        },
+        {
+          type: 'compare',
+          tag: '03 / 真实反差对比',
+          title: '老板以为的 AI 编程 vs 程序员真实的日常',
+          leftTitle: '💭 老板脑海里的画面',
+          leftItems: [
+            '一句话生成完整 App，明天就能省下一半人力',
+            '代码行数蹭蹭涨 = 团队干活效率高',
+            '全自动跑通，人只管坐着喝咖啡'
+          ],
+          rightTitle: '🔧 程序员真实的现状',
+          rightItems: [
+            '敲代码省下的半小时，全贴在看懂 AI 逻辑上了',
+            '敢删掉废代码的能力，比生成代码值钱 10 倍',
+            '需求沟通、系统设计和背锅侠依然只能靠人'
+          ]
+        },
+        {
+          type: 'action',
+          tag: '04 / 给普通人的实在建议',
+          title: '平时用 AI 干活怎么避开这个坑？',
+          steps: [
+            '别让 AI 一次性生成一大坨东西：拆成小块，每写完一小步你确认没问题再往下走',
+            '把精力花在“想清楚要什么”上，需求说不准，神仙模型也救不了',
+            '让两个模型互殴：A 模型写完的稿子或代码，直接丢给 B 模型让它专门挑毛病'
+          ],
+          ctaQuestion: '💬 聊聊：你平时用 AI 写东西或写代码，觉得是真省事了，还是改起来更累了？'
+        }
+      ],
+      articleBody: `最近海外程序员大本营 Hacker News 上有一篇帖子冲上热榜第一，短短几小时盖了近 300 楼，标题特别扎心：
+《AI coding agents generate more code, but not more software》（AI 制造了更多代码，却没造出更多好软件）。
+
+我把最精彩的几百条回复顺了一遍，全是实在话：
+
+📌 一、 扎心的“10% 悖论”：敲代码从来不是最费时间的
+
+评论区里一位技术主管的高赞回复，直接把很多老板的幻想戳破了：
+> “老板指望靠 AI 让开发速度翻倍。但真相是：我们团队只有 10% 的时间在真正敲代码，剩下 90% 的时间都在对齐需求、设计架构和排查故障。就算敲代码速度翻倍，整体也就快了 5%。”
+
+💡 二、 代码多不代表本事大，能删代码才叫本事
+
+AI 让“制造垃圾代码”变得毫无成本。真正决定一个软件好不好用的，从来不是代码写得多快，而是逻辑够不够简单、报错好不好修。
+
+📌 三、 硅谷老手现在都是怎么用的？
+
+1️⃣ 绝对不让 AI 一次拉一大坨：每次只让它写一个几十行的小功能，人看一眼没问题再继续。
+2️⃣ 让不同 AI 互相挑刺：先用另一个模型专门去检查刚生成的代码漏洞，过滤低级错误后，人再看核心逻辑。
+
+#AI编程 #程序员 #外网热议 #科技日常 #人工智能 #效率工具 #大实话`
+    }
+  ];
+
+  let currentPostData = JSON.parse(JSON.stringify(presetScenarios[0]));
+
+  window.addEventListener('DOMContentLoaded', () => {
+    loadSettingsToInputs();
+    renderPresetScenarios();
+    loadScenarioIntoStudio(currentPostData);
+    fetchLiveRadar();
+  });
+
+  function sanitizeFilename(str) {
+    return (str || '小红书笔记')
+      .replace(/[\\/:*?"<>|！!？?，,。、·\s]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .slice(0, 18);
+  }
+
+  function getTodayDateString() {
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function getCurrentFolderName() {
+    const rawTitle = document.getElementById('activeTitleInput')?.value || currentPostData.topicTitle || '小红书笔记';
+    return `${getTodayDateString()}_${sanitizeFilename(rawTitle)}`;
+  }
+
+  function updateFolderNamePreview() {
+    const el = document.getElementById('folderNamePreview');
+    if (el) {
+      el.innerText = `📁 导出文件夹名预览：${getCurrentFolderName()}/ (内含 01~05 命好名的图片 + 文案.txt)`;
+    }
+  }
+
+  function showToast(msg) {
+    const box = document.getElementById('toastBox');
+    document.getElementById('toastMsg').innerText = msg;
+    box.classList.remove('hidden');
+    setTimeout(() => box.classList.add('hidden'), 3500);
+  }
+
+  function setMainTab(tab) {
+    ['workspace', 'radar', 'settings'].forEach(t => {
+      const view = document.getElementById('view' + t.charAt(0).toUpperCase() + t.slice(1));
+      const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+      if (t === tab) {
+        view.classList.remove('hidden');
+        if (btn) btn.className = "px-3.5 py-1.5 rounded-lg font-semibold bg-[#FF2442] text-white transition flex items-center gap-1.5";
+      } else {
+        view.classList.add('hidden');
+        if (btn) btn.className = "px-3.5 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5";
+      }
+    });
+  }
+
+  function renderPresetScenarios() {
+    const container = document.getElementById('presetScenariosList');
+    container.innerHTML = presetScenarios.map((item, idx) => `
+      <div onclick="selectPresetScenario(${idx})" class="p-3 rounded-xl bg-[#0B0D13] hover:bg-white/[0.04] border ${item.id === currentPostData.id ? 'border-rose-500 bg-rose-950/20' : 'border-white/10'} hover:border-rose-500/50 cursor-pointer transition group">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[11px] font-bold text-rose-400">${item.category}</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-slate-400">${item.badge}</span>
+        </div>
+        <div class="text-xs font-semibold text-slate-100 group-hover:text-white line-clamp-1">${item.topicTitle}</div>
+        <div class="text-[10px] text-slate-500 mt-1 flex justify-between">
+          <span>${item.sourceMeta}</span>
+          <span class="text-rose-400 font-semibold">点击载入 ➔</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function selectPresetScenario(idx) {
+    currentPostData = JSON.parse(JSON.stringify(presetScenarios[idx]));
+    renderPresetScenarios();
+    loadScenarioIntoStudio(currentPostData);
+    showToast(`已载入「${currentPostData.category}」全套 5 张图文与成稿`);
+  }
+
+  function clearSourceInput() {
+    document.getElementById('inputTopicTitle').value = '';
+    document.getElementById('inputRawText').value = '';
+  }
+
+  function loadScenarioIntoStudio(data) {
+    document.getElementById('inputTopicTitle').value = data.topicTitle || '';
+    document.getElementById('inputRawText').value = data.rawSnippet || '';
+
+    const titleList = document.getElementById('titleMatrixList');
+    titleList.innerHTML = (data.titles || []).map((t, i) => {
+      const len = t.length;
+      const badgeColor = len <= 20 ? 'text-emerald-400 bg-emerald-500/10' : 'text-amber-400 bg-amber-500/10';
+      return `
+        <div onclick="selectTitleVariant(${i})" class="px-3 py-2 rounded-xl bg-[#0B0D13] border border-white/10 hover:border-rose-500/50 cursor-pointer flex items-center justify-between gap-2 group transition">
+          <span class="text-xs font-medium text-slate-200 group-hover:text-white">${t}</span>
+          <span class="text-[10px] font-mono px-1.5 py-0.5 rounded ${badgeColor} shrink-0">${len}字</span>
+        </div>
+      `;
+    }).join('');
+
+    const firstTitle = (data.titles && data.titles[0]) || data.topicTitle;
+    document.getElementById('activeTitleInput').value = firstTitle;
+    updateTitleCounter(firstTitle);
+    updateFolderNamePreview();
+
+    document.getElementById('articleBodyInput').value = data.articleBody || '';
+    updateWordCount();
+    renderActiveSlide();
+  }
+
+  function selectTitleVariant(idx) {
+    const title = currentPostData.titles[idx];
+    document.getElementById('activeTitleInput').value = title;
+    updateTitleCounter(title);
+    updateFolderNamePreview();
+    if (currentPostData.slides && currentPostData.slides[0]) {
+      currentPostData.slides[0].headline = `<span class="hl-mark">${title}</span>`;
+      if (activeSlideIndex === 0) renderActiveSlide();
+    }
+  }
+
+  function onActiveTitleEdit(val) {
+    updateTitleCounter(val);
+    updateFolderNamePreview();
+    if (currentPostData.slides && currentPostData.slides[0]) {
+      currentPostData.slides[0].headline = val;
+      if (activeSlideIndex === 0) renderActiveSlide();
+    }
+  }
+
+  function updateTitleCounter(val) {
+    const len = (val || '').length;
+    const el = document.getElementById('titleCharCount');
+    if (len <= 20) {
+      el.innerText = `${len} / 20字 (合规)`;
+      el.className = "text-[11px] font-mono text-emerald-400";
+    } else {
+      el.innerText = `${len} / 20字 (超长易被截断)`;
+      el.className = "text-[11px] font-mono text-rose-400 font-bold";
+    }
+  }
+
+  function updateWordCount() {
+    const text = document.getElementById('articleBodyInput').value || '';
+    document.getElementById('bodyWordCount').innerText = `${text.length} 字`;
+  }
+
+  function appendTag(tag) {
+    const area = document.getElementById('articleBodyInput');
+    area.value = area.value.trimEnd() + ' ' + tag;
+    updateWordCount();
+    showToast(`已追加标签 ${tag}`);
+  }
+
+  function polishCopyFormat() {
+    const area = document.getElementById('articleBodyInput');
+    let lines = area.value.split('\n').map(l => l.trim()).filter(Boolean);
+    area.value = lines.join('\n\n');
+    updateWordCount();
+    showToast('已优化段落空行间距');
+  }
+
+  function copyCompletePost() {
+    const title = document.getElementById('activeTitleInput').value.trim();
+    const body = document.getElementById('articleBodyInput').value.trim();
+    const full = `${title}\n\n${body}`;
+    navigator.clipboard.writeText(full).then(() => {
+      showToast('✅ 已复制完整标题+正文！可直接粘贴至小红书发布');
+    });
+  }
+
+  function setSlideTheme(themeName) {
+    currentTheme = themeName;
+    renderActiveSlide();
+  }
+
+  function switchSlidePage(pageIdx) {
+    activeSlideIndex = pageIdx;
+    document.querySelectorAll('.slide-tab').forEach((btn, idx) => {
+      if (idx === pageIdx) {
+        btn.className = "slide-tab px-3 py-1.5 rounded-lg text-xs font-bold bg-[#FF2442] text-white";
+      } else {
+        btn.className = "slide-tab px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-slate-400 hover:text-white";
+      }
+    });
+    renderActiveSlide();
+  }
+
+  function handleSlideImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      uploadedSlideImages[activeSlideIndex] = evt.target.result;
+      renderActiveSlide();
+      showToast(`已将配图插入第 P${activeSlideIndex + 1} 页卡片！`);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeSlideImage(idx) {
+    delete uploadedSlideImages[idx];
+    renderActiveSlide();
+  }
+
+  function handleAvatarUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      brandConfig.avatarDataUrl = evt.target.result;
+      localStorage.setItem('rp_avatarDataUrl', brandConfig.avatarDataUrl);
+      renderActiveSlide();
+      showToast('✅ 已将你的头像设为卡片底部专属印记！');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearAvatar() {
+    brandConfig.avatarDataUrl = '';
+    localStorage.removeItem('rp_avatarDataUrl');
+    renderActiveSlide();
+    showToast('已恢复为名字首字母圆标');
+  }
+
+  function buildSlideHTML(slide, pageIndex, totalPages) {
+    const pageNumStr = `0${pageIndex + 1} / 0${totalPages}`;
+    const customImg = uploadedSlideImages[pageIndex];
+    const imgBlock = customImg ? `
+      <div class="relative my-2 rounded-xl overflow-hidden border border-current/15 max-h-[135px] group">
+        <img src="${customImg}" class="w-full h-[135px] object-cover" />
+        <button onclick="removeSlideImage(${pageIndex})" class="absolute top-1.5 right-1.5 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition">移除图片</button>
+      </div>
+    ` : '';
+
+    const cleanName = (brandConfig.authorName || 'akia').trim();
+    const firstChar = (cleanName.replace(/^@/, '').charAt(0) || 'A').toUpperCase();
+    const avatarBadgeHTML = brandConfig.avatarDataUrl
+      ? `<img src="${brandConfig.avatarDataUrl}" class="w-5 h-5 rounded-full object-cover shrink-0 border border-current/20" />`
+      : `<span class="w-4 h-4 rounded-full xhs-red text-white font-black text-[9px] badge-circle">${firstChar}</span>`;
+
+    const topHeader = `
+      <div class="flex items-center justify-between text-[10px] font-mono tracking-wider opacity-75 pb-2.5 border-b border-current/15">
+        <span contenteditable="true" class="font-bold leading-none nowrap-lock">${brandConfig.issueTag}</span>
+        <span class="font-bold leading-none nowrap-lock">${pageNumStr}</span>
+      </div>
+    `;
+
+    const bottomFooter = `
+      <div class="pt-2.5 border-t border-current/15 flex items-center justify-between gap-2 text-[10px]">
+        <div class="flex items-center gap-1.5 nowrap-lock">
+          ${avatarBadgeHTML}
+          <span contenteditable="true" class="font-bold leading-none nowrap-lock">@${cleanName.replace(/^@/, '')}</span>
+        </div>
+        <span contenteditable="true" class="opacity-70 text-[9.5px] leading-none nowrap-lock truncate">${brandConfig.authorBio}</span>
+      </div>
+    `;
+
+    let middleBody = '';
+
+    if (slide.type === 'cover') {
+      middleBody = `
+        <div class="my-auto py-2 flex flex-col gap-3">
+          <div class="flex items-center">
+            <span contenteditable="true" class="pill-tag text-[10.5px] font-extrabold uppercase tracking-wide">${slide.tag || 'DEEP DIVE'}</span>
+          </div>
+          <h1 contenteditable="true" class="text-[23px] font-black leading-[1.3] tracking-tight">${slide.headline}</h1>
+          <p contenteditable="true" class="text-[12px] opacity-80 leading-relaxed font-medium">${slide.subhead}</p>
+          ${imgBlock}
+          <div class="sub-box rounded-xl p-3 mt-1">
+            <div class="text-[10px] font-bold uppercase tracking-wider accent-color mb-1 leading-none nowrap-lock">⚡ 省流核心结论</div>
+            <div contenteditable="true" class="text-[11.5px] font-semibold leading-snug">${slide.footerMetric}</div>
+          </div>
+        </div>
+      `;
+    } else if (slide.type === 'quote') {
+      middleBody = `
+        <div class="my-auto py-1 flex flex-col gap-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span contenteditable="true" class="pill-tag text-[10.5px] font-bold">${slide.tag}</span>
+            <span contenteditable="true" class="text-[10px] opacity-60 font-mono leading-none nowrap-lock">${slide.sourceTime}</span>
+          </div>
+          <div class="sub-box rounded-xl p-3 space-y-2">
+            <div class="flex items-center gap-2 border-b border-current/10 pb-2">
+              <div class="w-5 h-5 rounded-full bg-sky-500 text-white font-bold text-[10px] badge-circle">𝕏</div>
+              <div contenteditable="true" class="text-[11px] font-bold leading-none nowrap-lock">${slide.sourceTitle}</div>
+            </div>
+            <p contenteditable="true" class="text-[11px] font-mono opacity-85 leading-relaxed italic">${slide.enText}</p>
+          </div>
+          ${imgBlock}
+          <div class="sub-box rounded-xl p-3">
+            <p contenteditable="true" class="text-[12px] font-bold leading-relaxed">${slide.cnHighlight}</p>
+          </div>
+          <div contenteditable="true" class="text-[11px] font-semibold accent-color px-1 leading-snug">
+            🎯 ${slide.takeaway}
+          </div>
+        </div>
+      `;
+    } else if (slide.type === 'points') {
+      const itemsHTML = (slide.items || []).map(it => `
+        <div class="sub-box rounded-xl p-2.5 flex gap-2.5 items-start">
+          <span class="pill-tag text-[10px] font-mono font-black shrink-0">${it.num}</span>
+          <div>
+            <div contenteditable="true" class="text-[12px] font-extrabold leading-snug mb-0.5">${it.name}</div>
+            <div contenteditable="true" class="text-[10.5px] opacity-80 leading-normal">${it.desc}</div>
+          </div>
+        </div>
+      `).join('');
+      middleBody = `
+        <div class="my-auto py-1 flex flex-col gap-2">
+          <div class="flex flex-col items-start gap-1.5">
+            <span contenteditable="true" class="pill-tag text-[10.5px] font-bold">${slide.tag}</span>
+            <h2 contenteditable="true" class="text-[17px] font-black leading-snug">${slide.title}</h2>
+          </div>
+          ${imgBlock}
+          <div class="space-y-2 mt-1">${itemsHTML}</div>
+        </div>
+      `;
+    } else if (slide.type === 'compare') {
+      const leftList = (slide.leftItems || []).map(li => `<li contenteditable="true" class="text-[10.5px] leading-snug">• ${li}</li>`).join('');
+      const rightList = (slide.rightItems || []).map(ri => `<li contenteditable="true" class="text-[10.5px] font-medium leading-snug">• ${ri}</li>`).join('');
+      middleBody = `
+        <div class="my-auto py-1 flex flex-col gap-2.5">
+          <div class="flex flex-col items-start gap-1.5">
+            <span contenteditable="true" class="pill-tag text-[10.5px] font-bold">${slide.tag}</span>
+            <h2 contenteditable="true" class="text-[17px] font-black leading-snug">${slide.title}</h2>
+          </div>
+          ${imgBlock}
+          <div class="sub-box rounded-xl p-3 opacity-80">
+            <div contenteditable="true" class="text-[11.5px] font-extrabold mb-1.5 leading-snug">${slide.leftTitle}</div>
+            <ul class="space-y-1">${leftList}</ul>
+          </div>
+          <div class="sub-box rounded-xl p-3">
+            <div contenteditable="true" class="text-[11.5px] font-extrabold accent-color mb-1.5 leading-snug">${slide.rightTitle}</div>
+            <ul class="space-y-1">${rightList}</ul>
+          </div>
+        </div>
+      `;
+    } else {
+      const stepsHTML = (slide.steps || []).map((st, sIdx) => `
+        <div class="flex items-start gap-2.5">
+          <span class="pill-tag text-[10px] font-mono font-bold shrink-0">0${sIdx + 1}</span>
+          <p contenteditable="true" class="text-[11.5px] font-semibold leading-snug">${st}</p>
+        </div>
+      `).join('');
+      middleBody = `
+        <div class="my-auto py-1 flex flex-col gap-3">
+          <div class="flex flex-col items-start gap-1.5">
+            <span contenteditable="true" class="pill-tag text-[10.5px] font-bold">${slide.tag}</span>
+            <h2 contenteditable="true" class="text-[17.5px] font-black leading-snug">${slide.title}</h2>
+          </div>
+          ${imgBlock}
+          <div class="sub-box rounded-xl p-3.5 space-y-2.5">
+            ${stepsHTML}
+          </div>
+          <div class="sub-box rounded-xl p-2.5">
+            <p contenteditable="true" class="text-[11px] font-bold accent-color leading-snug">${slide.ctaQuestion}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div id="activeSlideCard" class="slide-card ${currentTheme} rounded-2xl p-6 flex flex-col justify-between shadow-2xl">
+        ${topHeader}
+        ${middleBody}
+        ${bottomFooter}
+      </div>
+    `;
+  }
+
+  function renderActiveSlide() {
+    const container = document.getElementById('slidesContainer');
+    const slides = currentPostData.slides || [];
+    const slide = slides[activeSlideIndex] || slides[0];
+    container.innerHTML = buildSlideHTML(slide, activeSlideIndex, slides.length);
+  }
+
+  async function captureElementToDataURL(el) {
+    if (window.htmlToImage && typeof window.htmlToImage.toPng === 'function') {
+      try {
+        return await window.htmlToImage.toPng(el, {
+          pixelRatio: 3,
+          cacheBust: true,
+          width: 360,
+          height: 480
+        });
+      } catch (e) {
+        console.warn('html-to-image fallback to html2canvas', e);
+      }
+    }
+    const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: null });
+    return canvas.toDataURL('image/png');
+  }
+
+  function dataURLToBlob(dataURL) {
+    const parts = dataURL.split(',');
+    const mime = parts[0].match(/:(.*?);/)[1];
+    const bstr = atob(parts[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+  }
+
+  function getSlideFileName(index) {
+    const role = SLIDE_ROLE_NAMES[index] || `图${index + 1}`;
+    const shortTopic = sanitizeFilename(document.getElementById('activeTitleInput').value || '小红书笔记');
+    const num = String(index + 1).padStart(2, '0');
+    return `${num}_P${index + 1}_${role}_${shortTopic}.png`;
+  }
+
+  async function downloadCurrentSlide() {
+    const card = document.getElementById('activeSlideCard');
+    if (!card) return;
+    const fileName = getSlideFileName(activeSlideIndex);
+    showToast(`正在导出 ${fileName}...`);
+    const dataUrl = await captureElementToDataURL(card);
+    const link = document.createElement('a');
+    link.download = fileName;
+    link.href = dataUrl;
+    link.click();
+  }
+
+  async function downloadAsFolderZip() {
+    const savedIndex = activeSlideIndex;
+    const slides = currentPostData.slides || [];
+    const folderName = getCurrentFolderName();
+    showToast(`正在创建文件夹「${folderName}」并渲染 5 张高清图...`);
+
+    const zip = new JSZip();
+    const folder = zip.folder(folderName);
+
+    const title = document.getElementById('activeTitleInput').value.trim();
+    const body = document.getElementById('articleBodyInput').value.trim();
+    const copyContent = `【小红书标题】\n${title}\n\n【小红书正文】\n${body}\n`;
+    folder.file(`00_小红书标题与正文.txt`, copyContent);
+
+    for (let i = 0; i < slides.length; i++) {
+      switchSlidePage(i);
+      await new Promise(r => setTimeout(r, 140));
+      const cardEl = document.getElementById('activeSlideCard');
+      const dataUrl = await captureElementToDataURL(cardEl);
+      const base64Data = dataUrl.split(',')[1];
+      const fileName = getSlideFileName(i);
+      folder.file(fileName, base64Data, { base64: true });
+    }
+
+    switchSlidePage(savedIndex);
+
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    const link = document.createElement('a');
+    link.download = `${folderName}.zip`;
+    link.href = URL.createObjectURL(zipBlob);
+    link.click();
+
+    showToast(`✅ 已导出文件夹「${folderName}」（内含命好名的 01~05 配图 + 文案.txt）！`);
+  }
+
+  async function exportToDirectLocalFolder() {
+    if (!window.showDirectoryPicker) {
+      showToast('当前浏览器不支持直写目录，已自动切换为打包文件夹下载...');
+      return downloadAsFolderZip();
+    }
+    try {
+      const rootDirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+      const savedIndex = activeSlideIndex;
+      const slides = currentPostData.slides || [];
+      const folderName = getCurrentFolderName();
+      showToast(`正在你的目录中创建「${folderName}」并写入文件...`);
+
+      const subDirHandle = await rootDirHandle.getDirectoryHandle(folderName, { create: true });
+
+      const title = document.getElementById('activeTitleInput').value.trim();
+      const body = document.getElementById('articleBodyInput').value.trim();
+      const txtFileHandle = await subDirHandle.getFileHandle('00_小红书标题与正文.txt', { create: true });
+      const txtWritable = await txtFileHandle.createWritable();
+      await txtWritable.write(`【小红书标题】\n${title}\n\n【小红书正文】\n${body}\n`);
+      await txtWritable.close();
+
+      for (let i = 0; i < slides.length; i++) {
+        switchSlidePage(i);
+        await new Promise(r => setTimeout(r, 140));
+        const cardEl = document.getElementById('activeSlideCard');
+        const dataUrl = await captureElementToDataURL(cardEl);
+        const blob = dataURLToBlob(dataUrl);
+        const fileName = getSlideFileName(i);
+        const imgFileHandle = await subDirHandle.getFileHandle(fileName, { create: true });
+        const imgWritable = await imgFileHandle.createWritable();
+        await imgWritable.write(blob);
+        await imgWritable.close();
+      }
+
+      switchSlidePage(savedIndex);
+      showToast(`🎉 已直接在你选定的目录下生成文件夹「${folderName}」！`);
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.error(err);
+        downloadAsFolderZip();
+      }
+    }
+  }
+
+  async function generateFullPost() {
+    const topic = document.getElementById('inputTopicTitle').value.trim();
+    const raw = document.getElementById('inputRawText').value.trim();
+    if (!topic && !raw) {
+      showToast('请先输入选题关键词或粘贴一段原始素材！');
+      return;
+    }
+    const coreTitle = topic || (raw.slice(0, 28).replace(/\n/g, ' '));
+    const cleanRaw = raw || `外网关于 ${coreTitle} 的最新高赞讨论。`;
+    const sentences = cleanRaw.split(/(?<=[.?!。？！])\s+/).filter(Boolean);
+    const point1 = sentences[0] || cleanRaw.slice(0, 110);
+    const point2 = sentences[1] || '大家讨论的焦点已经从单纯看热闹，变成了怎么真正在日常干活里用起来。';
+    const point3 = sentences[2] || '早一点摸清工具脾气的人，能省下不少重复折腾的时间。';
+
+    currentPostData = {
+      id: 'custom-' + Date.now(),
+      topicTitle: coreTitle,
+      sourceMeta: '外网一手资讯整理',
+      rawSnippet: cleanRaw,
+      titles: [
+        `${coreTitle.slice(0, 11)}：外网真实反馈`,
+        `大白话聊透${coreTitle.slice(0, 9)}！到底好不好用`,
+        `外网刷屏的${coreTitle.slice(0, 8)}，帮你省流完了`,
+        `扒完评论区，聊聊${coreTitle.slice(0, 8)}的实在话`
+      ],
+      slides: [
+        {
+          type: 'cover',
+          tag: '外网一手资讯 · 省流整理',
+          headline: `扒完外网原帖，用大白话把<span class="hl-mark">${coreTitle.slice(0, 12)}</span>聊透`,
+          subhead: `外网最新高赞讨论：不吹不黑，3 分钟看懂核心重点与真实体验`,
+          footerMetric: `一句话总结：看清真实优缺点，按自己的需求挑着用就对了`
+        },
+        {
+          type: 'quote',
+          tag: '01 / 原帖说了什么',
+          sourceTitle: '外网高赞讨论原话',
+          sourceTime: 'Latest Thread',
+          enText: `"${cleanRaw.slice(0, 190)}${cleanRaw.length > 190 ? '...' : ''}"`,
+          cnHighlight: `💡 大白话翻译：关于「${coreTitle}」，大家最真实的感受是——${point1.slice(0, 85)}`,
+          takeaway: '真实反馈：跳过夸张宣传，直接看一线用过的人怎么说。'
+        },
+        {
+          type: 'points',
+          tag: '02 / 3 个核心重点',
+          title: `关于「${coreTitle.slice(0, 12)}」最值得关注的 3 件事`,
+          items: [
+            { num: '01', name: '核心变化在哪', desc: point1.slice(0, 80) },
+            { num: '02', name: '真实的优缺点', desc: point2.slice(0, 80) },
+            { num: '03', name: '对咱们有什么用', desc: point3.slice(0, 80) }
+          ]
+        },
+        {
+          type: 'compare',
+          tag: '03 / 前后对比',
+          title: '宣传里的样子 vs 实际用起来的样子',
+          leftTitle: '👀 宣传通稿常说的',
+          leftItems: [
+            '吹得神乎其神，好像明天就能替代一切',
+            '只放最完美的演示，绝口不提翻车情况',
+            '动不动制造焦虑让人跟风'
+          ],
+          rightTitle: '🎯 实际用起来的感受',
+          rightItems: [
+            '在特定环节确实很省事，但还得人来把关',
+            '摸清它的脾气后，能帮日常干活省下不少时间',
+            '当成一个顺手的工具，心态最稳'
+          ]
+        },
+        {
+          type: 'action',
+          tag: '04 / 给普通人的实在建议',
+          title: '看完这篇可以直接做的 3 件事',
+          steps: [
+            `拿手头的一件小事试试「${coreTitle.slice(0, 10)}」到底顺不顺手`,
+            '好用的地方留下来当固定习惯，不好用的地方别硬凑',
+            '关注真实用户的踩坑经验，少走弯路'
+          ],
+          ctaQuestion: `💬 聊聊：你对「${coreTitle.slice(0, 10)}」怎么看？平时用过类似工具吗？`
+        }
+      ],
+      articleBody: `最近在外网刷到不少关于「${coreTitle}」的讨论，热度挺高。\n\n看了一圈，我把原帖和评论区最实在的几条反馈整理了出来，给大家做个省流：\n\n📌 一、 原帖核心聊了啥？\n\n> ${cleanRaw.slice(0, 180)}\n\n💡 二、 三个实在重点\n\n1️⃣ ${point1}\n2️⃣ ${point2}\n3️⃣ ${point3}\n\n#AI日常 #外网搬运 #科技分享 #实用工具`
+    };
+    loadScenarioIntoStudio(currentPostData);
+    showToast('✨ 已重新生成全套 5 张图卡与正文！');
+  }
+
+  async function fetchLiveRadar() {
+    const query = document.getElementById('radarSearchQuery').value.trim() || 'AI';
+    const source = document.getElementById('radarSourceSelect').value;
+    const statusEl = document.getElementById('liveRadarStatus');
+    const gridEl = document.getElementById('liveRadarGrid');
+
+    statusEl.innerText = `🔄 正在实时抓取外网最新讨论 (${source})...`;
+
+    try {
+      let items = [];
+      if (source.startsWith('hn_')) {
+        const endpoint = source === 'hn_hot'
+          ? `https://hn.algolia.com/api/v1/search?tags=story&query=${encodeURIComponent(query)}&hitsPerPage=12`
+          : `https://hn.algolia.com/api/v1/search_by_date?tags=story&query=${encodeURIComponent(query)}&hitsPerPage=12`;
+        const res = await fetch(endpoint);
+        const data = await res.json();
+        items = (data.hits || []).map(h => ({
+          title: h.title,
+          url: h.url || `https://news.ycombinator.com/item?id=${h.objectID}`,
+          points: h.points || 0,
+          comments: h.num_comments || 0,
+          sourceName: 'Hacker News (实时)',
+          snippet: `Hacker News 最新讨论：${h.title} (当前热度 ${h.points || 0} 赞 / ${h.num_comments || 0} 条评论)。`
+        }));
+      } else {
+        const subMap = {
+          reddit_localllama: 'LocalLLaMA',
+          reddit_singularity: 'singularity',
+          reddit_ai: 'ArtificialIntelligence'
+        };
+        const sub = subMap[source] || 'LocalLLaMA';
+        const res = await fetch(`https://www.reddit.com/r/${sub}/hot.json?limit=12`);
+        const data = await res.json();
+        items = (data.data.children || []).map(c => c.data).filter(d => !d.stickied).map(d => ({
+          title: d.title,
+          url: `https://www.reddit.com${d.permalink}`,
+          points: d.ups || 0,
+          comments: d.num_comments || 0,
+          sourceName: `Reddit r/${sub}`,
+          snippet: (d.selftext || d.title).slice(0, 500)
+        }));
+      }
+
+      if (!items.length) throw new Error('Empty feed');
+
+      statusEl.innerText = `✅ 已实时同步 ${items.length} 条外网最新线索：`;
+      gridEl.innerHTML = items.map((item) => `
+        <div class="bg-[#0B0D13] border border-white/10 hover:border-rose-500/50 rounded-2xl p-4 flex flex-col justify-between transition group">
+          <div>
+            <div class="flex items-center justify-between text-[11px] mb-2">
+              <span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-400 font-bold">${item.sourceName}</span>
+              <span class="font-mono text-slate-400">🔥 ${item.points} 赞 · 💬 ${item.comments} 评</span>
+            </div>
+            <h3 class="text-xs font-bold text-white leading-relaxed mb-2 group-hover:text-rose-300 transition">${item.title}</h3>
+            <p class="text-[11px] text-slate-400 line-clamp-3 leading-relaxed mb-3">${item.snippet}</p>
+          </div>
+          <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+            <a href="${item.url}" target="_blank" class="text-[11px] text-slate-500 hover:text-slate-300 underline">查看外网原帖 ↗</a>
+            <button onclick='importRadarItem(${JSON.stringify(item).replace(/'/g, "&#39;")})' class="px-3 py-1.5 rounded-lg xhs-gradient text-white text-[11px] font-bold shadow transition">
+              ⚡ 一键写成小红书图文
+            </button>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) {
+      statusEl.innerText = `💡 实时接口受本地网络环境影响，已为你展示预置热点：`;
+    }
+  }
+
+  function importRadarItem(item) {
+    document.getElementById('inputTopicTitle').value = item.title;
+    document.getElementById('inputRawText').value = item.snippet;
+    setMainTab('workspace');
+    generateFullPost();
+  }
+
+  function loadSettingsToInputs() {
+    document.getElementById('cfgAuthorName').value = brandConfig.authorName;
+    document.getElementById('cfgAuthorBio').value = brandConfig.authorBio;
+    document.getElementById('cfgIssueTag').value = brandConfig.issueTag;
+  }
+
+  function saveSettings() {
+    brandConfig.authorName = document.getElementById('cfgAuthorName').value.trim() || 'akia';
+    brandConfig.authorBio = document.getElementById('cfgAuthorBio').value.trim() || '外网搬运 ｜ AI八卦 ｜ 工具推荐';
+    brandConfig.issueTag = document.getElementById('cfgIssueTag').value.trim() || 'OVERSEAS AI · 外网一手资讯';
+
+    localStorage.setItem('rp_authorName', brandConfig.authorName);
+    localStorage.setItem('rp_authorBio', brandConfig.authorBio);
+    localStorage.setItem('rp_issueTag', brandConfig.issueTag);
+
+    renderActiveSlide();
+    setMainTab('workspace');
+    showToast('✅ 已保存你的账号印记并同步至全部 5 张卡片！');
+  }
+</script>
+</body>
+</html>
