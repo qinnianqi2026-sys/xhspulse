@@ -224,7 +224,7 @@
           <h1 class="font-bold text-base tracking-tight text-white">RedPulse AI Studio</h1>
           <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">2026-10-17 今日早报已更新</span>
         </div>
-        <p class="text-[11px] text-slate-400">从左到右固定三栏工作流 · 5图横向平铺预览 · 零星号纯净文案</p>
+        <p class="text-[11px] text-slate-400">从左到右固定三栏工作流 · 5图横向一字排开 · 纯净无星号文案</p>
       </div>
     </div>
 
@@ -262,9 +262,9 @@
       <div class="glass-panel rounded-2xl p-4 flex flex-col gap-3 border-rose-500/30">
         <div class="flex items-center justify-between">
           <h2 class="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
-            <span class="text-rose-500">①</span> 第一步(左)：挑选今日成稿
+            <span class="text-rose-500">①</span> 第一步(左)：10月17日今日新稿
           </h2>
-          <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">10月17日早报</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">早间刚更</span>
         </div>
         <div class="space-y-2" id="presetScenariosList"></div>
       </div>
@@ -279,7 +279,7 @@
 
         <div>
           <label class="text-[11px] text-slate-400 block mb-1">选题核心事件 / 关键词</label>
-          <input id="inputTopicTitle" type="text" class="w-full bg-[#0B0D13] border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500" placeholder="例如：Gemini通关我的世界 / ChatGPT广告...">
+          <input id="inputTopicTitle" type="text" class="w-full bg-[#0B0D13] border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500" placeholder="例如：4个AI通关我的世界 / Linus怒怼封杀AI...">
         </div>
 
         <div>
@@ -307,7 +307,7 @@
             <h2 class="text-sm font-bold text-white flex items-center gap-2">
               <span class="text-rose-500">②</span> 第二步(中)：确认标题与正文
             </h2>
-            <p class="text-[11px] text-slate-400 mt-0.5">已彻底去除多余星号，复制即可直接发小红书</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">已彻底去除多余星号 `**`，复制即可直接发小红书</p>
           </div>
           <button onclick="copyCompletePost()" class="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-xs font-bold transition flex items-center gap-1.5">
             <span>📋</span> 一键复制全文
@@ -343,7 +343,7 @@
             <button onclick="appendTag('#人工智能')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#人工智能</button>
             <button onclick="appendTag('#科技前沿')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#科技前沿</button>
             <button onclick="appendTag('#硅谷最新动态')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#硅谷最新动态</button>
-            <button onclick="appendTag('#我的世界')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#我的世界</button>
+            <button onclick="appendTag('#外网搬运')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#外网搬运</button>
           </div>
         </div>
 
@@ -359,7 +359,7 @@
             <h2 class="text-sm font-bold text-white flex items-center gap-2">
               <span class="text-rose-500">③</span> 第三步(右)：从左到右预览并导出 5 张配图
             </h2>
-            <p class="text-[11px] text-slate-400 mt-0.5" id="folderNamePreview">导出文件夹名预览：2026-10-17_4个AI死605次通关我的世界</p>
+            <p class="text-[11px] text-slate-400 mt-0.5" id="folderNamePreview">导出文件夹名预览：2026-10-17_4个AI被关进我的世界</p>
           </div>
 
           <div class="flex items-center gap-2">
@@ -515,410 +515,411 @@
       .replace(/^>\s?/gm, '💬 ');
   }
 
-  // ==================== TODAY'S FRESH STORIES (2026-10-17 MORNING EDITION, ZERO ASTERISKS) ====================
+  // ==================== TODAY'S FRESH STORIES (2026-10-17 MORNING EDITION) ====================
   const presetScenarios = [
     {
-      id: 'oct17-deepmind-minecraft',
-      category: '🎮 今日最炸实测 · 10月17日早报',
-      badge: 'DeepMind 新研究 · 27小时通关',
-      topicTitle: '谷歌把4个AI丢进《我的世界》：死了605次、自己写了2783个程序，27小时打穿末影龙！',
-      sourceMeta: 'Google DeepMind & HuggingFace 最新研究实录',
+      id: 'oct17-minecraft-agents',
+      category: '🎮 10月17日头版猎奇 · 视觉画面感极强',
+      badge: 'DeepMind 最新实验刷屏',
+      topicTitle: '把4个AI扔进《我的世界》不管它：27小时自己写2783个程序干翻末影龙！',
+      sourceMeta: 'Google DeepMind & HuggingFace 10月16~17日最新战报',
       rawSnippet: 'Google DeepMind placed four Gemini 4 Argon coding agents in a sandboxed Minecraft survival world and defeated the Ender Dragon from a random seed in 27 hours 14 minutes, writing 2,783 programs and dying 605 times, coordinating only through in-game chat and shared memory.',
       titles: [
-        '4个AI死605次！27小时自己写代码通关MC',
-        '谷歌把4个AI丢进我的世界，结局太离谱了',
-        '零人工干预！4个AI自己聊天分工打败末影龙',
-        '死了605次写出两千个程序！AI玩游戏成精了'
+        '把4个AI扔进我的世界，27小时通关了！',
+        '死了605次写2783个程序！AI打游戏太狠了',
+        '零人工干预！4个AI自己聊天分工干翻末影龙',
+        'DeepMind最新实验：当AI学会自己组队打Boss'
       ],
       slides: [
         {
           type: 'cover',
-          tag: '10.17 外网刷屏实验',
-          headline: '谷歌把 4 个 AI 丢进《我的世界》，死了 605 次后<span class="hl-mark">打穿末影龙</span>！',
-          subhead: '全程零人工接管：4 个智能体靠公屏聊天自己分工，边死边写了 2783 个代码脚本通关！',
-          footerMetric: '大白话总结：现在的 AI 已经不满足于陪聊了，放进沙盒里能自己组队打通开放世界'
+          tag: '10.17 外网刷屏神级实验',
+          headline: '把 4 个 AI 扔进《我的世界》，27小时自己<span class="hl-mark">写代码通关了</span>',
+          subhead: 'Google DeepMind 最新测试：零人类帮忙，死了 605 次、现场手搓 2783 个程序干翻末影龙！',
+          footerMetric: '核心看点：它们甚至只靠游戏里的聊天框互相喊话分工，完全像一支真人小队'
         },
         {
           type: 'quote',
-          tag: '01 / 实验数据还原',
-          sourceTitle: 'Google DeepMind · Gemini 4 Argon 实测',
-          sourceTime: 'Oct 16-17, 2026 · 27h 14m Run',
-          enText: '"Four Gemini 4 Argon coding agents defeated the Ender Dragon from a random spawn in 27 hours 14 minutes, writing 2,783 programs and dying 605 times, coordinating only via in-game chat."',
-          cnHighlight: '💡 大白话翻译：DeepMind 把 4 个 Gemini 4 编程智能体丢进完全随机生成的《我的世界》生存模式。它们只靠游戏里的聊天框和共享笔记本沟通，一共死了 605 次、现场手搓了 2783 个程序，花 27 小时 14 分钟成功宰掉末影龙通关！',
-          takeaway: '离谱看点：没人教它们怎么配合，4 个 AI 自己在聊天框里吵架、排班、分工挖矿。'
+          tag: '01 / 实验数据直接看傻',
+          sourceTitle: 'Google DeepMind 研究战报',
+          sourceTime: 'Oct 16-17, 2026 · 实测记录',
+          enText: '"Four coding agents placed in a random Minecraft survival world defeated the Ender Dragon in 27h 14m—writing 2,783 programs and dying 605 times, coordinating only via in-game chat."',
+          cnHighlight: '💡 大白话翻译：研究人员把 4 个编程智能体丢进完全随机生成的《我的世界》生存模式里。27 小时 14 分钟后，它们靠自己在游戏聊天框里商量对策，死了 605 次，自己写了 2783 段小程序，硬生生把终极 Boss 末影龙给推平了。',
+          takeaway: '最恐怖的地方：没人教它们怎么走，全靠死出来的教训自己改代码。'
         },
         {
           type: 'points',
-          tag: '02 / 它们是怎么做到的？',
-          title: '这 4 个 AI 在游戏里干了哪 3 件神操作？',
+          tag: '02 / 这4个AI是怎么配合的？',
+          title: '比真人队友还靠谱的 3 个逆天细节',
           items: [
-            { num: '01', name: '不会就现场写代码：手搓 2783 个脚本', desc: '遇到挖矿、盖房子、合成装备或者躲怪卡壳时，它们不是乱按键盘，而是现场写一段程序脚本来自动执行。' },
-            { num: '02', name: '死 605 次不崩溃，共享记忆库越打越精', desc: '每次掉进岩浆或被苦力怕炸死，它们就把踩坑原因写进公共记忆本，队友下次路过直接绕着走。' },
-            { num: '03', name: '纯靠游戏公屏聊天，自己组队打 Boss', desc: '一个负责挖钻石造装备，一个去下界找烈焰棒，最后凑齐末影之眼一起进末地围殴末影龙。' }
+            { num: '01', name: '不会动作就当场写代码造工具', desc: '遇到挖矿、造船、找要塞等操作，AI 不是按手柄，而是现场写出 2783 个控制脚本自己执行。' },
+            { num: '02', name: '只靠游戏公屏打字聊天分工', desc: '一个去砍树挖铁，一个去下界打烈焰人，谁死了或者缺材料直接在公屏发消息喊队友支援。' },
+            { num: '03', name: '死了 605 次但从不在同一个坑摔倒', desc: '每次掉岩浆或被怪炸死，都会把教训写进共享记忆本，下一次复活立刻改写生存代码。' }
           ]
         },
         {
           type: 'compare',
-          tag: '03 / 前后进化对比',
-          title: '以前的 AI 玩游戏 vs 现在的 Agent 组队',
-          leftTitle: '🕹️ 以前的游戏 AI（死板脚本）',
+          tag: '03 / 前后代 AI 的跨代对比',
+          title: '以前的 AI 玩游戏 vs 现在的 Agent 小队',
+          leftTitle: '🕹️ 以前的测试（单打独斗背板）',
           leftItems: [
-            '得靠人类提前喂几百万局录像死记硬背',
-            '换个随机地图或者改个规则立刻原地犯傻',
-            '只能各玩各的，不会跟队友用人话商量战术'
+            '得先喂几万小时人类高手录像去模仿',
+            '只能干砍树或挖矿一件事，换张地图就懵',
+            '一旦卡在墙角就无限撞墙死循环'
           ],
-          rightTitle: '🚀 现在的 Gemini 4 智能体小队',
+          rightTitle: '🚀 现在的测试（多智能体自治社会）',
           rightItems: [
-            '开局一张随机图，靠自己写代码探索规则',
-            '死了 605 次能自己复盘改 Bug，越挫越勇',
-            '4 个 AI 像真人宿舍开黑一样在公屏聊天分工'
+            '随机地图开局，边踩坑边写新程序适应环境',
+            '4 个 AI 自动分化出采集、基建、战斗不同角色',
+            '连续 27 小时超长任务不掉链子，直奔终极目标'
           ]
         },
         {
           type: 'action',
-          tag: '04 / 这事对咱们有啥启发？',
-          title: '别光当游戏看，背后的信号太强烈了',
+          tag: '04 / 这事对咱们意味着啥？',
+          title: '别光看游戏热闹，背后是工作方式的剧变',
           steps: [
-            '“多智能体协作（Multi-Agent）”彻底成熟：未来干活不是用一个 AI，而是让三四个 AI 分工配合',
-            '遇到复杂长任务，给 AI 配一个“错题本（共享记忆）”，它的表现能翻好几倍',
-            '游戏陪玩和虚拟队友要变天了，以后单机游戏里也能塞进一群会跟你斗嘴开黑的真 AI 队友'
+            '今天是 4 个 AI 在游戏里分工挖矿打龙，明天就是 4 个 AI 在你电脑里分工扒数据、写代码、测 Bug',
+            '未来的核心能力不再是亲手干每一件小活，而是当好这群 AI 小队的“包工头”',
+            '遇到复杂大任务，学会让多个 AI 共享一个“错题本（共享记忆）”，成功率直接翻倍'
           ],
-          ctaQuestion: '💬 聊聊：如果游戏里给你配 3 个这种会自己写代码爆肝的 AI 队友，你最想带它们玩啥？'
+          ctaQuestion: '💬 聊聊：如果给你配 4 个能自己聊天配合的 AI 队友，你最想带它们干票什么大的？'
         }
       ],
-      articleBody: `今天（10月17日）外网极客圈和游戏圈同时被谷歌 DeepMind 的一项新实验刷屏了！
+      articleBody: `今天（10月17日）外网科技圈最火、最让人看得津津有味的一场实验，来自 Google DeepMind 刚刚公布的测试结果：
+他们把 4 个 AI 智能体（Gemini 4 Argon）直接扔进了《我的世界（Minecraft）》的随机生存地图里，然后人类撒手不管了。
 
-研究人员干了一件特别好玩的事：他们把 4 个最新的「Gemini 4 Argon」编程智能体，直接丢进了完全随机生成的《Minecraft（我的世界）》生存模式里，目标只有一个——在没有任何人类插手的情况下，活下来并击败终极 Boss 末影龙。
+结果 27 小时 14 分钟之后，这 4 个 AI 硬生生从零撸树开始，一路杀进末地，把游戏的终极 Boss「末影龙」给干翻通关了！
 
-最终出炉的实验账单把大家都看乐了：
-这 4 个 AI 在里面整整肝了 27 小时 14 分钟，期间一共花式死了 605 次，自己动手写了 2,783 个程序脚本，最后真的把末影龙给宰了！
+我把整份实验报告最精彩的数据扒了出来，看完真的后背发凉又觉得太酷了：
 
-📌 一、 它们在游戏里到底是怎么配合的？
+📌 一、 三个让人瞠目结舌的实验数字
 
-最神的地方在于，研究人员没有给它们写死任何分工规则。
-这 4 个 AI 完全就像四个刚搬进同一间宿舍的大学生，只靠游戏左下角的「公屏聊天框」和一份「共享记忆文档」交流：
+1️⃣ 死了 605 次，但越死越聪明
+这 4 个 AI 一开始也跟新手玩家一样，掉岩浆、被苦力怕炸、从高处摔死，前前后后一共死了 605 次。但每死一次，它们就会把死因记进“共享小本本”里，绝对不在同一个坑里摔第二次。
 
-1️⃣ 遇到难题直接现场写代码
-它们不是靠手柄瞎晃悠，而是每当需要砍树、挖矿、造工作台或者跑路时，直接现场写一段控制代码。27 个小时里一共手搓了 2783 个小程序，等于边玩游戏边给自己写外挂。
+2️⃣ 现场手搓了 2783 段程序
+它们玩游戏不是靠手速按键，而是遇到一个新问题（比如怎么自动搭桥、怎么躲避攻击），就当场自己写一段小程序来控制角色。整场游戏下来，4 个 AI 自己写了 2783 个程序脚本！
 
-2️⃣ 死了 605 次，把错题本写满了
-老玩家都知道《我的世界》随机地图坑特别多。这四个 AI 一开始也是疯狂掉岩浆、被苦力怕炸飞、在下界迷路。但每次死完，它们就会在共享文档里记一笔，其他三个队友看到后立刻调整脚本，绝不在同一个坑里摔倒。
+3️⃣ 纯靠游戏里的聊天框打字商量
+研究人员没有给它们开什么神秘的心灵感应后门，这 4 个 AI 全程就是靠游戏左下角的公屏聊天框打字沟通——谁去挖钻石、谁去下界刷烈焰棒、谁家里缺铁了，全在聊天框里自己分配得明明白白。
 
-3️⃣ 真正的“宿舍开黑式”分工
-到了后期，它们自己在聊天框里商量出了流水线：有的留守基地搞后勤附魔，有的钻进下界刷烈焰棒，最后凑齐装备一起跳进末地传送门围殴末影龙。
+💡 二、 为什么大家说这不只是一场游戏？
 
-💡 二、 看完热闹，这事透露了什么实在信号？
+以前 AI 玩游戏厉害（比如打星际或Dota），靠的是每秒钟几万次的极限微操；
+但《我的世界》完全不同——它是一场长达几十个小时的“超长项目管理”：你得先活下来、搞基建、攒装备、跨维度探险，最后才能打 Boss。
 
-▪️ 单打独斗不如组队干活：以前我们用一个 AI 干活很容易卡壳，现在把任务拆给三四个 AI 让它们互相聊天配合，复杂长任务的成功率直接飙升。
-▪️ 游戏的未来要变了：以后玩生存建造游戏，再也不怕找不到朋友联机了，直接召唤几个 24 小时不睡觉、还任劳任怨帮你挖矿盖房子的 AI 室友！
+这 4 个 AI 证明了一件事：现在的智能体已经能像一个小型创业团队一样，连续 27 个小时自己拆解目标、自己写工具、互相补位把一件极其复杂的大事干成了。
 
-实验的核心数据和细节我都整理在上面 5 张图里了，左滑就能看全貌！
+完整的数据拆解和对比我都做在上面 5 张图里了，左滑就能看！
 
-👇 评论区聊聊：如果给你配 4 个 24 小时不睡觉的 AI 队友，你最想让它们去哪个游戏里帮你打工？
+👇 评论区聊聊：看到 4 个 AI 在游戏里自己聊天组队通关，你觉得离 AI 自己组团开公司还有多远？
 
-#我的世界 #Minecraft #谷歌DeepMind #人工智能 #AI新知 #游戏日常 #外网搬运`
-    },
-    {
-      id: 'oct17-chatgpt-ads-privacy',
-      category: '🚨 今日大瓜曝光 · 10亿用户注意',
-      badge: '404Media 实测扒皮',
-      topicTitle: '外网炸锅！ChatGPT 广告后台被扒：你在对话框里聊的心事，正被拿来精准投广告！',
-      sourceMeta: '404 Media 实测调查 & AI Weekly 今日头版',
-      rawSnippet: '404 Media test of ChatGPT new ad platform found advertisers can inject ads targeted at specific users via uploaded phone number, email or device identifier, and OpenAI also targets on the prompts users type across its 1 billion monthly active users.',
-      titles: [
-        '外网炸锅！你跟ChatGPT聊的心事全变广告了',
-        '实测扒皮！ChatGPT正拿你的提问精准投广告',
-        '10亿用户注意！别再往对话框里发这些隐私了',
-        '连手机号都能定向？ChatGPT新广告系统被扒'
-      ],
-      slides: [
-        {
-          type: 'cover',
-          tag: '10.17 外网隐私大瓜',
-          headline: '外网炸锅！你跟 ChatGPT 聊的私密心事，正被拿来<span class="hl-mark">精准投广告</span>',
-          subhead: '海外科技媒体 404 Media 实测扒皮：不仅按你的提问词塞广告，还能直接靠手机号锁定你！',
-          footerMetric: '大白话提醒：免费的东西果然最贵，千万别把大模型当成绝对保密的树洞'
-        },
-        {
-          type: 'quote',
-          tag: '01 / 外媒实测证据',
-          sourceTitle: '404 Media 调查记者实测报告',
-          sourceTime: 'Oct 15-16, 2026 · 10亿月活受影响',
-          enText: '"404 Media\'s own test of ChatGPT\'s ad platform found advertisers can target specific users via uploaded phone number, email, or device ID—and OpenAI also targets directly on the prompts users type."',
-          cnHighlight: '💡 大白话翻译：调查媒体 404 Media 自己注册了 ChatGPT 的广告后台做测试，结果发现：广告商不仅能上传手机号、邮箱和设备号来精准锁定某个具体的人，而且你在聊天框里敲下的每一句提问（Prompt），都会被拿来匹配推送广告！',
-          takeaway: '细思极恐：以前搜百度谷歌顶多暴露关键词，现在大家跟 AI 聊的可是整段人生烦恼。'
-        },
-        {
-          type: 'points',
-          tag: '02 / 这次扒出了哪 3 个真相？',
-          title: 'ChatGPT 的广告系统到底是怎么锁人的？',
-          items: [
-            { num: '01', name: '你敲的 Prompt 就是最精准的广告标签', desc: '比如你让它帮你改简历、聊失眠焦虑、或者问某个病的症状，下一秒相关行业的广告就精准找上门。' },
-            { num: '02', name: '支持上传手机号与邮箱列表“点名投喂”', desc: '商家只要手里有你的手机号或注册邮箱，就能在后台把广告定向塞进你的 ChatGPT 对话界面里。' },
-            { num: '03', name: '覆盖全球 10 亿月活用户，商业化彻底摊牌', desc: '算力账单太贵，巨头们终于还是走上了社交平台“靠用户隐私换广告费”的老路。' }
-          ]
-        },
-        {
-          type: 'compare',
-          tag: '03 / 风险对比',
-          title: '传统搜索引擎广告 vs AI 聊天框广告',
-          leftTitle: '🔍 以前的搜索广告（颗粒度粗）',
-          leftItems: [
-            '你只输入两三个零散的词（比如“胃疼怎么办”）',
-            '广告商不知道你的具体背景和上下文',
-            '一眼就能看出来哪条是硬邦邦的推广链接'
-          ],
-          rightTitle: '⚠️ 现在的 AI 对话广告（把你底裤看穿）',
-          rightItems: [
-            '很多人把工资条、感情危机、公司机密全发进去',
-            'AI 完全知道你的年龄、痛点、预算甚至性格弱点',
-            '顺着话茬给你推荐东西，防备心最低最容易中招'
-          ]
-        },
-        {
-          type: 'action',
-          tag: '04 / 普通人防身指南',
-          title: '平时用 AI 怎么保护自己的隐私？',
-          steps: [
-            '立刻去设置里关掉“用我的对话训练模型 / 个性化广告”相关开关',
-            '工作合同、财务表格、体检报告和身份证号，打死也别直接往公网免费聊天框里传',
-            '涉及敏感私人资料时，优先用本地离线开源模型，或者把真名和手机号打码后再发'
-          ],
-          ctaQuestion: '💬 聊聊：你平时跟 AI 聊天时，吐露过自己比较私密的个人信息吗？'
-        }
-      ],
-      articleBody: `今天（10月17日）外网科技圈讨论最凶的一个大瓜，给所有把 AI 当“私人树洞”和“全能秘书”的朋友提了个醒！
-
-海外以硬核调查出名的科技媒体 404 Media 刚刚公布了一份实测报告：记者亲自潜入 ChatGPT 最新上线的广告后台做了一轮测试，结果扒出了让人后背发凉的追踪机制。
-
-要知道，现在 ChatGPT 已经有整整 10 亿月活用户，很多人每天在里面聊工作、聊感情、甚至传体检报告。但你可能没想到，你敲进去的每一个字，都正在变成广告商眼里的精准靶子！
-
-📌 一、 记者实测扒出了哪 2 个扎心操作？
-
-1️⃣ 你输入的 Prompt（提问），直接决定给你塞什么广告
-以前我们用搜索引擎，顶多搜两个词；但现在大家用 AI，习惯把前因后果、家庭情况、预算多少全写进一段话里。实测发现，后台允许直接根据用户在对话框里输入的 Prompt 内容进行实时广告匹配。
-
-2️⃣ 商家可以拿手机号和邮箱“点名投喂”
-更夸张的是，广告后台支持广告商直接上传一批手机号、电子邮箱或者设备 ID。只要你的账号绑了同一个邮箱或手机号，商家就能把特定的广告精准塞进你的页面里。
-
-💡 二、 为什么说“AI 聊天框广告”比传统广告更可怕？
-
-评论区有高赞网友一针见血地指出：
-人们面对搜索结果时是有防备心的；但面对一个温和、懂你、刚帮你改完方案的 AI 助手时，人的心理防线几乎是零。当它顺着你的焦虑或痛点给你递过来一个链接时，杀伤力比传统弹窗大十倍。
-
-📌 三、 咱们普通人现在就能做的 3 个自保动作
-
-▪️ 检查隐私开关：顺手点进你常用 AI 工具的「Settings（设置）➔ Data Controls（数据控制）」，把允许用于训练和个性化追踪的开关关掉。
-▪️ 敏感信息先脱敏：发合同、简历或报表让 AI 分析前，顺手把里面的真实姓名、电话、公司名删掉或替换成代号。
-▪️ 私密文件用本地模型：真正核心的私人文档，尽量在自己电脑上跑离线开源模型处理。
-
-详细实测细节和防坑对比我都整理在上面 5 张图里了，建议大家存一下顺手检查自己的设置！
-
-👇 评论区聊聊：如果常用的 AI 开始在回答里夹带广告，你还会继续用它吗？
-
-#ChatGPT #隐私安全 #外网热议 #人工智能 #科技吃瓜 #避坑指南 #互联网内幕`
+#我的世界 #人工智能 #DeepMind #科技前沿 #外网搬运 #AI新知 #游戏日常`
     },
     {
       id: 'oct17-linus-torvalds-ai',
-      category: '🔥 大佬暴脾气开炮 · 极客圈刷屏',
-      badge: 'Linux之父怒怼反AI派',
-      topicTitle: 'Linux之父Linus当众开骂：“一刀切禁止AI是愚蠢的，你也是！”外网程序员吵翻了',
-      sourceMeta: 'Linux 内核邮件列表 (LKML) & Hacker News 热议',
-      rawSnippet: 'Linus Torvalds on LKML: "banning AI is stupid and so are you." Following debates at the kernel summit where contributors pushed to ban AI-generated patches, Linus argued AI is just a tool like compilers or editors, and performative bans are useless.',
+      category: '💥 10月17日祖师爷开炮 · 极客圈炸锅',
+      badge: 'HN & Reddit 刷屏暴言',
+      topicTitle: 'Linux之父Linus直接开骂：“一刀切封杀AI是蠢货，你也是！”',
+      sourceMeta: 'Linux内核邮件列表 (LKML) & Hacker News 10月16~17日热帖',
+      rawSnippet: 'Linus Torvalds on LKML: "banning AI is stupid and so are you." Amid heated debates at the kernel summit over banning AI-generated code, Linus made clear that AI is just a tool like compilers or editors, and banning a tool just to make a statement is completely useless.',
       titles: [
-        'Linux之父当众开骂：禁止AI是愚蠢的，你也是',
-        '祖安祖师爷又发飙！Linus怒怼“一刀切禁AI”',
-        '外网程序员吵翻！Linux之父一句话骂醒所有人',
-        '把AI当洪水猛兽？看看Linux之父是怎么怼人的'
+        'Linux之父直接开骂：封杀AI是蠢货，你也是！',
+        '程序员祖师爷发飙了！一针见血点评AI争议',
+        '外网吵翻！Linus怒怼“反AI派”：别拿工具撒气',
+        '封杀AI写代码？看看Linux之父是怎么骂醒众人的'
       ],
       slides: [
         {
           type: 'cover',
-          tag: '10.17 极客圈名场面',
-          headline: 'Linux 之父当众开骂：“禁止 AI 是愚蠢的，<span class="hl-mark">你也是</span>！”',
-          subhead: '内核邮件列表再现暴脾气神回复：面对“全面封杀 AI 代码”的呼声，Linus 一句话把桌子掀了',
-          footerMetric: '核心态度：工具好不好用看结果，搞形式主义一刀切封杀纯属掩耳盗铃'
+          tag: '10.17 极客圈头版暴言',
+          headline: 'Linux 之父直接开骂：<span class="hl-mark">封杀 AI 是蠢货</span>，你也是！',
+          subhead: 'Hacker News 今日刷屏：面对社区吵着要“全面禁止 AI 代码”，祖师爷 Linus 终于忍无可忍了',
+          footerMetric: '暴躁老爷子金句：AI 只是个工具，为了摆姿态去封杀一个工具蠢透了'
         },
         {
           type: 'quote',
-          tag: '01 / 暴脾气原话还原',
+          tag: '01 / 祖师爷原话现场',
           sourceTitle: 'Linus Torvalds · Linux 内核邮件列表 (LKML)',
-          sourceTime: 'Oct 16, 2026 · HN & Reddit 刷屏',
-          enText: '"Banning AI is stupid and so are you." — Linus Torvalds responding to demands for a blanket ban on AI tools in kernel development after the Kernel Summit.',
-          cnHighlight: '💡 大白话翻译：在刚结束的峰会争论后，又有人跳出来要求在项目里明文禁止使用一切 AI 工具。忍无可忍的 Linux 创始人 Linus Torvalds 直接甩出一句经典狠话：“一刀切禁止 AI 是愚蠢的，你也是！”',
-          takeaway: '吃瓜背景：这位大神怼人三十年从不嘴软，但每次发火背后其实都特别务实。'
+          sourceTime: 'Oct 16-17, 2026 · 暴脾气上线',
+          enText: '"Linus Torvalds: \'banning AI is stupid and so are you.\' Given Linus\' stance that it\'s just a tool, it\'s really odd to ban only that one tool just to make a statement."',
+          cnHighlight: '💡 大白话翻译：这两天开源圈又在吵要不要明令禁止用 AI 写代码。Linux 与 Git 的缔造者 Linus Torvalds 直接在邮件列表里回怼了一句：“禁止 AI 是愚蠢的，而你也是！”他直言 AI 就是个工具，为了表忠心去封杀一个工具毫无意义。',
+          takeaway: '吃瓜背景：老爷子守护 Linux 三十多年，专治各种矫情和形式主义。'
         },
         {
           type: 'points',
-          tag: '02 / 他为什么发这么大火？',
-          title: 'Linus 拆穿“禁 AI 派”的 3 个大实话',
+          tag: '02 / 为什么 Linus 会突然发火？',
+          title: '还原这场大吵架背后的 3 个真相',
           items: [
-            { num: '01', name: '发个禁令除了自我感动，根本没法执行', desc: '人在自己电脑上用没用 AI 辅助，你怎么查？定一条根本没法落地的死规矩，只会逼着大家撒谎。' },
-            { num: '02', name: '烂代码就是烂代码，跟谁写的没关系', desc: '不管是人手敲出来的垃圾，还是 AI 吐出来的垃圾，只要质量不过关就直接打回，盯着工具抓错重点了。' },
-            { num: '03', name: '当年连高级编译器和自动补全也被人骂过', desc: '在老一辈极客眼里，AI 跟拼写检查器、代码补全没本质区别，好用就留着打杂，不好用自然会被淘汰。' }
+            { num: '01', name: '没完没了的“反AI政治正确”让他烦透了', desc: '刚开完内核峰会，又有人跳出来要求立规矩封杀 AI，老爷子听腻了这种车轱辘话直接开麦。' },
+            { num: '02', name: '只看代码好坏，不看你用什么键盘敲的', desc: '烂代码就算是纯手敲的也是垃圾；好代码就算用了 AI 辅助，只要人把关负责就没毛病。' },
+            { num: '03', name: '一刀切禁令根本没法执行，纯属自嗨', desc: '根本没人能 100% 鉴定一行代码背后有没有问过 AI，立这种虚头巴脑的规矩纯属浪费生命。' }
           ]
         },
         {
           type: 'compare',
-          tag: '03 / 外网评论区两派交锋',
-          title: '支持 Linus 派 vs 担忧 AI 派在吵什么？',
-          leftTitle: '🛡️ 担忧派（苦于垃圾投稿轰炸）',
+          tag: '03 / 外网评论区两派吵翻',
+          title: '支持 Linus 派 vs 担忧 AI 派的激烈交锋',
+          leftTitle: '🛡️ 挺 Linus 派（实用主义老兵）',
           leftItems: [
-            '很多新手用 AI 一键生成几百个假补丁来刷履历',
-            '维护者每天光清理 AI 幻觉写出的废话就累瘫了',
-            '担心开源代码池被版权不明的黑盒模型污染'
+            '当年高级语言和自动补全出来时也有人骂',
+            '该罚的是“不看代码就乱交垃圾的人”，不是工具',
+            '干活只看最终质量，搞洁癖禁令毫无意义'
           ],
-          rightTitle: '⚡ Linus 务实派（只认结果不认口号）',
+          rightTitle: '⚠️ 担忧派（被垃圾投稿折磨的维护者）',
           rightItems: [
-            '审稿严卡质量关，谁敢交垃圾直接拉黑提交者本人',
-            '工具无罪，会用工具的人能把枯燥的排查快进十倍',
-            '30 年开源能活下来，靠的是实用主义而不是洁癖'
+            '很多新手用 AI 生成几百行漏洞百出的代码来刷存在感',
+            '大模型黑盒生成跟传统编译器根本不是一回事',
+            '审代码的维护者快被海量的 AI 灌水帖淹没了'
           ]
         },
         {
           type: 'action',
-          tag: '04 / 对普通人的实在启发',
-          title: '这场骂战对咱们日常工作有什么参考？',
+          tag: '04 / 给普通打工人的启发',
+          title: '从祖师爷的暴言里，咱们能悟出啥？',
           steps: [
-            '记住“背锅的永远是人”：不管你用不用 AI 写报告写代码，签了你的名字，你就得对每一行字负责',
-            '别搞精神洁癖，也别当无脑甩手掌柜：让 AI 干粗活，人来做最严格的把关人',
-            '在任何行业里，结果做得漂亮才是硬道理，没人真正在乎你用什么牌子的锤子'
+            '别陷入“用 AI 羞耻症”：不管是写方案还是写代码，能把活干漂亮就是硬道理',
+            '工具不背锅，人要为结果兜底：千万别把没检查过的 AI 半成品直接甩给同事或老板',
+            '少参加网上“AI到底行不行”的口水仗，悄悄用它把自己的活早点干完下班最实在'
           ],
-          ctaQuestion: '💬 聊聊：你们公司或学校现在对用 AI 是鼓励、不管，还是明令禁止？'
+          ctaQuestion: '💬 聊聊：你支持 Linus“不管是人是AI，活干好就行”的观点吗？'
         }
       ],
-      articleBody: `熟悉科技圈的朋友都知道，Linux 创始人、Git 的发明者 Linus Torvalds 是出了名的“暴脾气大实话王”。
+      articleBody: `今天（10月17日）程序员圈和 Reddit 上最热闹的瓜，莫过于计算机界的活传奇、Linux 和 Git 的缔造者 Linus Torvalds 又双叒叕骂人了！
 
-就在昨天到今天（10月16~17日），他在 Linux 内核邮件列表（LKML）里的一句最新开炮，直接把 Hacker News 和 Reddit 极客圈给点炸了——
-面对有人再次要求“在项目里明文禁止使用 AI”，Linus 直接回怼了一句：
-💬 “Banning AI is stupid and so are you.”（禁止 AI 是愚蠢的，你也是！）
+而且这次骂得极其直接，原话标题直接在 Hacker News 刷屏：
+💬 “Banning AI is stupid and so are you.”（封杀 AI 是愚蠢的，而你也是！）
 
-📌 一、 他为什么要发这么大火？
+很多不混技术圈的朋友可能不知道，Linus 老爷子向来以“暴脾气、只认逻辑不认人情”著称。这次到底是谁把他惹毛了？我把邮件列表和评论区的前因后果扒了一遍：
 
-其实这事已经在开源圈吵了好几个月了。刚开完的内核峰会上大家才争论过一轮，结果转头又有人不依不饶，非要逼着官方出一个“严禁使用 AI”的政治表态。
+📌 一、 起因：没完没了的“封杀 AI”争论
 
-Linus 的逻辑其实特别人间清醒：
-1️⃣ 管工具是蠢办法，管结果才是真本事
-如果一段代码写得像坨垃圾，不管它是你熬夜手敲出来的，还是大模型一秒钟吐出来的，都应该直接扔进垃圾桶；反过来，如果代码干净漂亮、修好了 Bug，谁在乎你写的时候有没有用 AI 查资料？
+最近在开源社区和刚结束的内核峰会上，总有一批人反复提议：应该立下一条死规矩，严禁任何人在提交代码时使用 AI 工具。
+结果这话传到 Linus 耳朵里，老爷子积攒了很久的不耐烦直接爆发了。
 
-2️⃣ 无法执行的禁令，只会催生虚伪
-你在自己家里电脑上用 AI 改了两行代码再交上来，谁能拿测谎仪查出来？定一条纯属为了“表态”而根本查不到的禁令，除了让老实人吃亏、让聪明人偷着乐，毫无意义。
+他的核心逻辑非常干脆：
+1️⃣ AI 本质上就是一个工具，跟你的代码编辑器、编译器没什么两样。
+2️⃣ 如果一个人交上来一坨跑不通的垃圾代码，那是因为这个人蠢、不负责任，你直接把他的代码拒了就行，去封杀工具干什么？
+3️⃣ 明知道这种禁令根本没法查、没法管，纯粹为了“摆姿态、喊口号”去搞一刀切，除了感动自己没有任何用处。
 
-💡 二、 为什么评论区也有不少人理解“反 AI 派”的苦水？
+💡 二、 评论区为什么也吵翻了？
 
-这次 Hacker News 评论区吵得很凶，因为两边其实都有苦衷：
-▪️ 审稿人的噩梦：现在确实有太多半瓶水的新手，拿 AI 一键生成一大堆狗屁不通的报告和补丁到处乱投，害得负责审核的老师傅每天像掏化粪池一样疲于奔命。
-▪️ 但正如高赞评论所说：应该惩罚的是“不检查就乱交垃圾的人”，而不是把菜刀给没收了。
+虽然大家都喜欢看老爷子怼人，但评论区里也有不少项目维护者倒出了苦水：
+▪️ 支持者觉得：话糙理不糙！不管黑猫白猫，能写出稳定好用的程序就是好猫。
+▪️ 反对者吐槽：现在很多菜鸟连代码都看不懂，拿 AI 一秒钟生成几百行似是而非的 Bug 往上交，害得审代码的老手每天像在淘粪。
 
-📌 三、 放在咱们日常工作里也是一样
+📌 三、 这事给咱们普通人的实在参考
 
-现在很多学校和公司也在纠结要不要一刀切禁 AI。其实 Linus 这句话糙理不糙：
-工具永远只是工具。拿 AI 偷懒交半成品糊弄事的人，不用 AI 也照样糊弄；而真正靠谱的人，早就悄悄用工具把效率翻倍，同时把最后的质量死死攥在自己手里了。
+其实各行各业现在都一样——有人视 AI 如洪水猛兽，有人拿 AI 敷衍塞责。
+最聪明的做法就是 Linus 的态度：大大方方把 AI 当成趁手的工具用，但永远由你自己对交出去的东西做最后把关！
 
-整场争论的来龙去脉我都整理在上面 5 张图里了，左滑就能看！
+老爷子的原话和两派交锋我都整理在上面 5 张图里了，左滑直接吃瓜！
 
-👇 评论区聊聊：你现在的老板或老师，看到大家用 AI 干活是什么态度？
+👇 评论区聊聊：你们公司或学校现在对用 AI 是鼓励还是限制？
 
-#Linux #程序员 #外网热议 #人工智能 #职场大实话 #科技吃瓜 #开源社区`
+#Linus #程序员日常 #外网吃瓜 #人工智能 #开源社区 #科技热议 #大实话`
     },
     {
-      id: 'oct17-sakana-scientist-v3',
-      category: '📘 科研圈王炸开源 · 全自动写论文',
-      badge: 'GitHub 开源 · 论文已中顶会',
-      topicTitle: '给个文档就能自己做实验写论文！Sakana AI 开源第3代“AI科学家”，连顶会审稿人都通过了',
-      sourceMeta: 'Sakana AI 官方 GitHub & AI Weekly 10月16~17日通报',
-      rawSnippet: 'Sakana AI published version 3 of its AI Scientist pipeline, The Agentic Scientist, on GitHub under Apache 2.0 alongside an 88-page arXiv paper. The scaffold turns a task.md into experiments, ablations and a paper inside Docker; a development version co-authored an oral paper accepted at ALIFE 2026.',
+      id: 'oct17-sakana-ai-scientist',
+      category: '🔬 10月17日重磅开源 · 科研党狂喜',
+      badge: 'GitHub 刚开源 · 论文中顶会',
+      topicTitle: '只给一个文档，AI自己跑实验写论文还中了顶会！Sakana开源第3代“AI科学家”',
+      sourceMeta: 'Sakana AI 官方 & GitHub Apache 2.0 开源发布',
+      rawSnippet: 'Sakana AI open-sources Agentic Scientist v3 on GitHub under Apache 2.0 alongside an 88-page paper. The scaffold turns a task.md into experiments, ablations, figures and a full paper inside Docker; a version co-authored an oral paper accepted at ALIFE 2026.',
       titles: [
-        '给个文档自己跑实验写论文！AI科学家v3开源',
-        '连顶会审稿都过了！全自动写论文AI正式开源',
-        '研究生看呆了！扔个任务书它自己做完实验写完稿',
-        '开源免费！第3代AI科学家把科研做成流水线'
+        '只给个文档，AI自己做实验写论文还中了顶会！',
+        'Sakana刚把第3代“AI科学家”免费开源了！',
+        '科研党看傻！从跑实验到画图写论文全自动',
+        '写个task.md就能出论文？外网爆火的开源神器'
       ],
       slides: [
         {
           type: 'cover',
-          tag: '10.17 开源圈重磅王炸',
-          headline: '给个文档就能自己做实验写论文！第3代<span class="hl-mark">AI科学家</span>正式开源',
-          subhead: '日本独角兽 Sakana AI 放出 Apache 2.0 免费代码：自己跑代码、自己画图表，写的论文已中顶会 Oral！',
-          footerMetric: '核心突破：不再是帮你润色文字，而是从“跑实验➔画对比图➔写整篇论文”全包圆'
+          tag: '10.17 GitHub 开源王炸',
+          headline: '只喂一个文档，AI 自己跑实验写论文还<span class="hl-mark">中了顶会</span>！',
+          subhead: '日本独角兽 Sakana 刚刚免费开源「Agentic Scientist v3」：把科研从头到尾做成全自动流水线',
+          footerMetric: '硬核战绩：它参与撰写的论文，刚刚被 ALIFE 2026 国际顶会录用为口头报告！'
         },
         {
           type: 'quote',
-          tag: '01 / 官方开源通告',
-          sourceTitle: 'Sakana AI · The Agentic Scientist v3',
-          sourceTime: 'Oct 15-16, 2026 · Apache 2.0 开源',
-          enText: '"Sakana AI published version 3 of its AI Scientist pipeline on GitHub under Apache 2.0. The scaffold turns a task.md into experiments, ablations, and a paper inside Docker; a dev version co-authored an oral paper accepted at ALIFE 2026."',
-          cnHighlight: '💡 大白话翻译：Sakana AI 刚刚在 GitHub 上完全免费开源了第 3 代 AI 科学家（附带 88 页技术报告）。你只需要给它一个写着研究目标的 task.md 文档，它就能在容器里自己写代码跑实验、做消融对比、生成可视化图表并写出整篇论文——测试版写的论文甚至刚拿下了 ALIFE 2026 顶会的口头报告！',
-          takeaway: '真实进展：以前的 AI 只会嘴炮编文献，现在的 v3 是真刀真枪在沙盒里跑完实验再动笔。'
+          tag: '01 / 刚刚放出的开源情报',
+          sourceTitle: 'Sakana AI 官方技术发布',
+          sourceTime: 'Oct 15-17, 2026 · Apache 2.0 协议',
+          enText: '"Sakana AI open-sources Agentic Scientist v3 on GitHub alongside an 88-page paper. The scaffold turns a simple task.md into code experiments, ablations, figures and a full paper inside Docker."',
+          cnHighlight: '💡 大白话翻译：由前谷歌大脑大神创立的 Sakana AI，刚刚在 GitHub 上用最宽松的 Apache 2.0 协议免费开源了第三代全自动科研系统。你只需写一个极其简单的 task.md 任务说明，它就能在隔离容器里自己写代码、跑对比实验、画架构图，最后生成一篇完整论文。',
+          takeaway: '真刀真枪：不是玩具演示，它刚拿下了今年国际大会的 Oral（口头报告）录用。'
         },
         {
           type: 'points',
-          tag: '02 / 第 3 代到底升级了啥？',
-          title: '从“一个任务文档”到“一篇完整论文”的 3 步',
+          tag: '02 / 它是怎么自己做科研的？',
+          title: '全自动“AI 科学家 v3”的 3 步闭环',
           items: [
-            { num: '01', name: '喂一个 task.md，自己在 Docker 里写代码跑实验', desc: '不用人手把手调参，Agent 自己设计实验对照组，跑不通自己看报错改代码，直到跑出真实数据。' },
-            { num: '02', name: '内置 AutoIllustrate：自动画出顶会级架构图', desc: '告别丑陋的默认折线图，系统会自动根据实验数据排版生成清晰的科研长图与消融对比表。' },
-            { num: '03', name: '真金白银过审：已发表 Nature 子刊与顶会 Oral', desc: '不再是自娱自乐的玩具，这套流水线产出的论文已经实打实通过了人类学术同行的盲审。' }
+            { num: '01', name: '读懂你的 task.md，自己设计消融实验', desc: '不用你手把手写代码，给它一个方向和数据，多个编程 Agent 会自动商量出实验方案并开跑。' },
+            { num: '02', name: '发现数据不对，自己改代码重跑', desc: '如果第一轮实验跑出来的指标拉胯，它会像真正的研究生一样看报错日志、改参数、做对照实验。' },
+            { num: '03', name: '内置 AutoIllustrate：自动画出顶会级配图', desc: '不仅能写正文，还专门配了自动绘图模块，把实验数据和系统架构直接画成干净漂亮的科研图表。' }
           ]
         },
         {
           type: 'compare',
-          tag: '03 / 前后代能力对比',
-          title: '普通 AI 写论文 vs Sakana AI 科学家 v3',
-          leftTitle: '❌ 普通大模型写论文（纯文字裁缝）',
+          tag: '03 / 前后三代进化有多快？',
+          title: '初代 AI 写论文 vs 第三代 Agentic Scientist',
+          leftTitle: '🕰️ 以前（只会凑字数的水文机器）',
           leftItems: [
-            '没有真实实验数据，全靠车轱辘话硬凑字数',
-            '经常一本正经胡编根本不存在的假参考文献',
-            '导师一眼就能看出是没跑过实验的空壳子'
+            '只能帮人润色一下英文语法或拼凑摘要',
+            '实验数据稍微复杂一点就开始瞎编乱造',
+            '画出来的图丑得一眼假，根本过不了同行评审'
           ],
-          rightTitle: '✅ Agentic Scientist v3（先干活后写稿）',
+          rightTitle: '🚀 现在的 v3（真正在容器里跑代码实测）',
           rightItems: [
-            '先在本地 Docker 容器里把实验代码跑出真结果',
-            '自动补做消融实验（Ablation）堵住审稿人挑刺',
-            'Apache 2.0 协议完全开源，实验室可直接拿来改'
+            '所有结论都来自 Docker 容器里真刀真枪跑出来的代码',
+            '自带多智能体交叉互审，先在内部把漏洞挑光',
+            '连带 88 页技术报告与全套源码完全免费公开'
           ]
         },
         {
           type: 'action',
-          tag: '04 / 对硕博与打工人的实用价值',
-          title: '咱们普通人怎么借这套开源神器的力？',
+          tag: '04 / 普通人怎么借力这套工具？',
+          title: '哪怕不发学术论文，这 3 个思路也极有用',
           steps: [
-            '写报告或做毕业设计时，学会用“task.md 任务书思维”：先把目标、评价指标和限制条件写成清单',
-            '拿它的 AutoIllustrate 模块思路来自动生成汇报图表，省下熬夜对齐 PPT 框框的苦力活',
-            '去做“提好问题的人”：当跑基线实验变成全自动流水线，能想出巧妙新点子的人身价翻倍'
+            '做毕业设计、写行业分析或测代码的朋友，可以直接去 GitHub 搜 Agentic Scientist 拿它的框架改着用',
+            '学它“用一个 task.md 驱动全流程”的习惯：先把目标、评价标准写进一个文档，再让 AI 动手',
+            '用它的 AutoIllustrate 思路，让 AI 先写绘图代码再转成高清架构图，比纯生图准得多'
           ],
-          ctaQuestion: '💬 聊聊：如果 AI 连做实验、画图、写论文都能一条龙干完，你觉得以后读研最核心的是学啥？'
+          ctaQuestion: '💬 聊聊：如果 AI 连设计实验、跑数据、画图写论文都能一条龙干完，研究生的日常会变成啥样？'
         }
       ],
-      articleBody: `今天（10月17日）科研圈和 GitHub 开源圈最轰动的一条消息：
-一直死磕“全自动科研”的日本明星独角兽 Sakana AI，正式在 GitHub 上把第 3 代 AI 科学家「The Agentic Scientist v3」彻底开源了（而且是最良心的 Apache 2.0 协议，免费可商用）！
+      articleBody: `如果说前两天大家还在争论 AI 写代码到底靠不靠谱，那日本最火的 AI 独角兽 Sakana AI 刚刚放出的开源大招，直接把“全自动做科研”往前推了一大步！
 
-很多正在读研、读博或者平时要写深度调研报告的朋友看完它的演示，第一反应都是：这也太猛了！
+他们刚刚在 GitHub 上免费开源了第三代全自动科研系统——「The Agentic Scientist v3」（采用最良心的 Apache 2.0 开源协议，还附带了一篇足足 88 页的详细技术报告）。
 
-📌 一、 它跟平时咱们拿 ChatGPT 润色论文有啥本质区别？
+最让人服气的是：这套系统不是自嗨，它深度参与撰写的一篇研究论文，刚刚真刀真枪通过了同行盲审，被 2026 国际人工生命大会（ALIFE 2026）选为了 Oral（口头报告）！
 
-平时大家用大模型写东西，本质上是“文字裁缝”——你没做实验，它就只能给你编一堆空洞的套话。
-但这次开源的 v3 完全是一套「工程沙盒流水线」：
-1️⃣ 你只需要丢给它一个简单的 task.md 任务文档（写清楚你要研究什么问题、用什么数据集）。
-2️⃣ 它自己会在隔离的 Docker 容器里写代码、搭环境、跑基线实验。
-3️⃣ 跑完第一轮后，它还会像最严格的审稿人一样反问自己：“这个结论稳不稳？要不要加一组消融实验（Ablation Study）？”然后自己补跑对比实验。
-4️⃣ 最后，它调用内置的 AutoIllustrate 画图模块，把真实跑出来的数据画成漂亮的科研图表，排好版写成一篇完整的论文。
+📌 一、 它到底是怎么把科研做成“流水线”的？
 
-💡 二、 写出来的东西真能看吗？
+以前我们用 AI 写论文，顶多是让它润色一下英文、改改语病。
+但这次的 v3 版本完全是另一个物种：
+1️⃣ 你只需要给它准备一个写明研究目标和背景的「task.md」文档；
+2️⃣ 系统会在安全的 Docker 容器里，调度多个编程 Agent 自己写代码、自己跑实验、甚至自己设计消融对比（Ablation Study）；
+3️⃣ 跑出真实数据后，它内置的「AutoIllustrate」模块会自动把枯燥的数据画成非常漂亮的科研架构图和折线图，最后排版成一篇完整的学术论文。
 
-这可不是自嗨——官方在报告里晒出了成绩单：
-这套系统早期版本写出的论文不仅登上了 Nature 相关刊物，而且最新的 v3 开发版刚刚作为共同作者，拿下了一篇 ALIFE 2026 国际学术会议的 Oral（口头报告）录用！
+💡 二、 为什么它不会“一本正经胡说八道”？
 
-📌 三、 给咱们普通人的 2 个实在启发
+因为它的每一句结论，都必须对应容器里真实跑出来的代码结果！
+如果实验报错或者数据不理想，它不会去编造假数据，而是像一个不知疲倦的理工科研究生一样，顺着报错日志去改代码、调参数，直到跑出经得起检验的结果。
 
-▪️ 苦力活正在以肉眼可见的速度消失：以前调代码、跑基础对比实验、画架构图要耗掉研究生大半年时间，现在正变成开源脚本的一键日常。
-▪️ “提问题的品味”成了唯一壁垒：当机器一天能跑完十组实验时，最值钱的不再是谁更能熬夜搬砖，而是谁能想到那个最值得验证的好点子。
+📌 三、 普通学生和打工人能拿它干嘛？
 
-我已经把这套开源项目的核心流程和对比整理在上面 5 张图里了，左滑即可查看！
+哪怕你不发顶会论文，这套刚刚开源的代码库也有两个特别香的用处：
+▪️ 拿它自动跑数据分析与周报：给它一堆杂乱的业务表格和一个目标文档，让它自己写 Python 跑出结论并画好图表。
+▪️ 照抄它的自动画图模块（AutoIllustrate）：平时写方案、做 PPT 缺高颜值逻辑架构图时，这套自动生成矢量图的方案简直是救星。
 
-👇 评论区聊聊：如果让你给这个“全自动 AI 科学家”派一个活，你最想让它帮你研究明白什么问题？
+全套原理解析我都整理在上面 5 张卡片里了，左滑就能看详情！
 
-#开源项目 #写论文神器 #研究生日常 #人工智能 #GitHub #科技前沿 #外网搬运`
+👇 评论区聊聊：你觉得未来写毕业论文或研究报告，人最核心的工作会变成什么？
+
+#科研工具 #研究生日常 #开源项目 #人工智能 #论文写作 #科技前沿 #外网搬运`
+    },
+    {
+      id: 'oct17-chatgpt-ads-privacy',
+      category: '🕵️ 10月17日外媒实测揭秘 · 人人相关',
+      badge: '404Media 实测扒皮',
+      topicTitle: '实锤了！外媒实测扒出：ChatGPT 正根据你聊的私密心事和手机号精准推广告',
+      sourceMeta: '404 Media & AI Weekly 10月16~17日深度调查',
+      rawSnippet: '404 Media test of ChatGPT new ad platform found advertisers can inject ads targeted at specific users via uploaded phone number, email or device identifier, and OpenAI also targets on the prompts users type across 1 billion monthly active users.',
+      titles: [
+        '实锤！ChatGPT正拿你聊的心事精准推广告',
+        '别把AI当树洞了！外媒扒出ChatGPT广告内幕',
+        '你给AI发的每一句话，都成了广告商的靶子？',
+        '外媒实测曝光：AI精准投广告比搜索引擎更狠'
+      ],
+      slides: [
+        {
+          type: 'cover',
+          tag: '10.17 外媒实测大扒皮',
+          headline: '别拿 AI 当树洞了！外媒实测：你聊的心事正被用来<span class="hl-mark">精准推广告</span>',
+          subhead: '404 Media 最新暗访测试：广告商不仅能按你刚输入的提示词投流，还能直接上传手机号锁定你！',
+          footerMetric: '扎心提醒：你以为是在跟贴心助手聊私房话，其实背后站着一排记笔记的推销员'
+        },
+        {
+          type: 'quote',
+          tag: '01 / 外媒实测抓到的铁证',
+          sourceTitle: '404 Media 调查记者实测报告',
+          sourceTime: 'Oct 15-17, 2026 · 独家测试',
+          enText: '"404 Media\'s own test of ChatGPT\'s ad platform found advertisers can inject ads targeted at specific users via uploaded phone number or email, and target directly on the prompts users type."',
+          cnHighlight: '💡 大白话翻译：知名科技调查媒体 404 Media 自己注册成广告主去测试了 ChatGPT 的新广告后台。结果发现：广告商不仅能直接根据你正在输入的聊天内容（Prompts）插播广告，甚至能上传一份手机号和邮箱名单，点名道姓只给特定的人投广告！',
+          takeaway: '细思极恐：以前搜关键词才会被盯上，现在连跟 AI 吐个槽都被明码标价了。'
+        },
+        {
+          type: 'points',
+          tag: '02 / 为什么说 AI 广告比传统广告更狠？',
+          title: '外媒扒出的 3 个让人后背发凉的细节',
+          items: [
+            { num: '01', name: '以前你只搜“买什么”，现在你跟 AI 聊“所有软肋”', desc: '大家习惯把感情危机、健康焦虑、财务困境全倒给 AI，这些私密提示词成了最精准的商业画像。' },
+            { num: '02', name: '支持手机号、邮箱与设备号直接匹配', desc: '只要商家手里有你的手机号或邮箱，就能在后台直接勾选，在你和 AI 聊天时精准塞入推广内容。' },
+            { num: '03', name: 'Meta 也在同一天修改霸王条款', desc: '外媒同时爆出 Meta 10月30日生效的新规：只要绑定了商业账号的网站，全都会被强制爬取拿去喂 AI。' }
+          ]
+        },
+        {
+          type: 'compare',
+          tag: '03 / 隐私安全感对比',
+          title: '云端免费聊天框 vs 本地/隐私优先方案',
+          leftTitle: '📢 靠广告变现的云端大厂',
+          leftItems: [
+            '你输入的每一句提示词都在帮它完善你的消费画像',
+            '手机号、邮箱与聊天记录在后台被交叉关联',
+            '回答里可能不知不觉夹带了金主爸爸的软广推荐'
+          ],
+          rightTitle: '🔒 保护隐私的聪明用法',
+          rightItems: [
+            '在设置里手动关掉“用我的数据训练与个性化广告”',
+            '绝对不在提示词里写真实姓名、手机号、身份证与合同原件',
+            '真正敏感的私密文档，用本地开源小模型断网处理'
+          ]
+        },
+        {
+          type: 'action',
+          tag: '04 / 咱们普通人怎么防一手？',
+          title: '今天花 1 分钟就能做好的 3 件小事',
+          steps: [
+            '检查你常用 AI 软件的「隐私/数据控制（Data Controls）」设置，把训练与广告追踪开关关掉',
+            '发给 AI 的材料先做“脱敏”：把真实人名、公司名和金额换成 A公司、某甲',
+            '当 AI 突然热情向你推荐某个具体品牌或服务时，多留个心眼——那可能是一条定向广告'
+          ],
+          ctaQuestion: '💬 聊聊：如果 AI 免费但会在聊天里塞精准广告，你能接受吗？'
+        }
+      ],
+      articleBody: `今天（10月17日）外网有一篇调查报道引起了全网警惕，所有平时喜欢把 AI 当“私人树洞”或“工作秘书”的朋友都应该看一眼！
+
+海外知名科技调查媒体 404 Media 的记者，自己乔装成广告主，去实测了 ChatGPT 最新上线的广告投放后台，结果扒出了几个让人后背发凉的真相。
+
+📌 一、 记者实测发现了什么？
+
+以前我们用搜索引擎，搜了“牙疼”，网页旁边会出现牙科广告，这大家早就习惯了。
+但这次记者在后台实测发现，AI 时代的广告精准度直接上了一个台阶：
+1️⃣ 直接按你聊的「提示词（Prompts）」实时狙击
+哪怕你只是在跟 AI 倾诉最近失眠、焦虑、或者在聊某段感情烦恼，广告系统都能直接捕捉你字里行间的情绪和需求，精准推送相关产品。
+
+2️⃣ 支持上传手机号和邮箱“点名投流”
+实测发现，广告商可以直接往后台上传一份包含手机号、电子邮箱或设备 ID 的名单，把广告精准注射给特定的目标人群。
+
+💡 二、 为什么大家对“AI 塞广告”反应这么大？
+
+因为绝大多数人对待搜索引擎和对待 AI 的防备心是完全不一样的！
+我们在搜索框里只会敲两三个干巴巴的词；但在跟 AI 聊天时，很多人会把自己的真实工资、家庭矛盾、体检报告、甚至公司的机密合同竹筒倒豆子一样全喂给它。
+一旦这些最深层的隐私变成了广告商眼里的“精准靶子”，杀伤力比传统网页弹窗大太多了。
+
+📌 三、 咱们普通用户怎么保护自己？（3个实用习惯）
+
+1️⃣ 别把真实身份信息喂给对话框：不管是写简历、审合同还是聊心事，养成习惯先把真实姓名、电话、公司名替换成化名。
+2️⃣ 随手关掉后台开关：去你常用 AI 工具的「设置 - 数据控制（Data Controls）」里，把“允许使用对话改进模型”和个性化广告选项统统关掉。
+3️⃣ 警惕“恰饭回答”：以后当 AI 突然特别热情地给你安利某一个冷门牌子时，别全信，那可能还真是一条付费推广。
+
+我已经把这次外媒实测的细节和防坑指南整理在上面 5 张图里了，建议大家存下来提个醒！
+
+👇 评论区聊聊：你平时跟 AI 聊天时，会有所保留吗？
+
+#ChatGPT #隐私安全 #人工智能 #外网爆料 #科技新知 #互联网内幕 #大实话`
     }
   ];
 

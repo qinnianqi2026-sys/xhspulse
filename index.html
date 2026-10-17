@@ -3,11 +3,1639 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="refresh" content="0; url=RedPulse_AI_Studio.html">
 <title>RedPulse AI Studio · 小红书 AI 爆款图文全栈工作台</title>
-<script>window.location.replace("RedPulse_AI_Studio.html");</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<style>
+  :root {
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+  body {
+    font-family: var(--font-sans);
+    background-color: #090A0F;
+    color: #F3F4F6;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #11131A; }
+  ::-webkit-scrollbar-thumb { background: #2A2E3D; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #FF2442; }
+
+  .glass-panel {
+    background: rgba(18, 20, 28, 0.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .xhs-red { background-color: #FF2442; }
+  .xhs-red-text { color: #FF2442; }
+  .xhs-gradient { background: linear-gradient(135deg, #FF2442 0%, #FF5C77 100%); }
+
+  /* Always lock horizontal 3-column workflow from left to right */
+  .horizontal-workbench {
+    display: grid !important;
+    grid-template-columns: 320px 420px minmax(520px, 1fr) !important;
+    gap: 20px !important;
+    min-width: 1280px !important;
+    align-items: stretch !important;
+  }
+
+  .slide-card {
+    width: 360px;
+    height: 480px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+    user-select: none;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  }
+  .slide-card [contenteditable="true"] {
+    outline: none;
+    cursor: text;
+    user-select: text;
+    border-radius: 4px;
+    transition: background-color 0.15s;
+  }
+  .slide-card [contenteditable="true"]:hover {
+    background-color: rgba(255, 36, 66, 0.08);
+  }
+  .slide-card [contenteditable="true"]:focus {
+    background-color: rgba(255, 36, 66, 0.14);
+    box-shadow: 0 0 0 1px rgba(255, 36, 66, 0.4);
+  }
+
+  .nowrap-lock {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  .pill-tag {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1.1 !important;
+    padding: 5px 10px !important;
+    border-radius: 6px !important;
+    vertical-align: middle !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+  .badge-circle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Theme 1: Magazine Cream */
+  .theme-magazine {
+    background-color: #FAF8F5;
+    color: #141413;
+    background-image: radial-gradient(#E5E0D8 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+  .theme-magazine .hl-mark {
+    background-color: #FDE047;
+    color: #111111;
+    padding: 1px 5px;
+    border-radius: 4px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  .theme-magazine .sub-box {
+    background: #FFFFFF;
+    border: 1.5px solid #141413;
+    box-shadow: 4px 4px 0px #141413;
+  }
+  .theme-magazine .pill-tag {
+    background: #141413;
+    color: #FAF8F5;
+  }
+  .theme-magazine .accent-color { color: #FF2442; }
+
+  /* Theme 2: Obsidian Gold */
+  .theme-obsidian {
+    background: linear-gradient(155deg, #121318 0%, #090A0D 60%, #191512 100%);
+    color: #F9FAFB;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+  }
+  .theme-obsidian .hl-mark {
+    background-color: rgba(245, 158, 11, 0.3);
+    color: #FDE68A;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .theme-obsidian .sub-box {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+  }
+  .theme-obsidian .pill-tag {
+    background: #F59E0B;
+    color: #090A0D;
+  }
+  .theme-obsidian .accent-color { color: #FBBF24; }
+
+  /* Theme 3: Klein Tech */
+  .theme-klein {
+    background: #002FA7;
+    color: #FFFFFF;
+    background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .theme-klein .hl-mark {
+    background: #CCFF00;
+    color: #002FA7;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .theme-klein .sub-box {
+    background: rgba(0, 18, 70, 0.65);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+  }
+  .theme-klein .pill-tag {
+    background: #CCFF00;
+    color: #001B66;
+  }
+  .theme-klein .accent-color { color: #CCFF00; }
+
+  /* Theme 4: Breaking Red */
+  .theme-breaking {
+    background: #FFFFFF;
+    color: #0F172A;
+    border-top: 10px solid #FF2442;
+  }
+  .theme-breaking .hl-mark {
+    background: #FFE4E6;
+    color: #E11D48;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .theme-breaking .sub-box {
+    background: #F8FAFC;
+    border: 1.5px solid #E2E8F0;
+    border-left: 4px solid #FF2442;
+  }
+  .theme-breaking .pill-tag {
+    background: #FF2442;
+    color: #FFFFFF;
+  }
+  .theme-breaking .accent-color { color: #FF2442; }
+
+  /* Theme 5: Cyber Neon */
+  .theme-cyber {
+    background: radial-gradient(circle at top right, #1E1B4B, #090D16 70%);
+    color: #F1F5F9;
+  }
+  .theme-cyber .hl-mark {
+    background: rgba(56, 189, 248, 0.25);
+    color: #38BDF8;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .theme-cyber .sub-box {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+  .theme-cyber .pill-tag {
+    background: #38BDF8;
+    color: #090D16;
+  }
+  .theme-cyber .accent-color { color: #38BDF8; }
+</style>
 </head>
-<body style="background:#090A0F;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
-  <p>正在打开 <a href="RedPulse_AI_Studio.html" style="color:#FF2442;">RedPulse AI Studio (2026-10-17 今日早报版)</a>...</p>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Top Navigation Bar (Locked Horizontal) -->
+  <header class="h-16 border-b border-white/10 bg-[#0C0E14]/95 backdrop-blur-md sticky top-0 z-50 px-6 flex items-center justify-between min-w-[1280px]">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl xhs-gradient flex items-center justify-center shadow-lg shadow-rose-500/20 font-black text-white text-sm tracking-tighter">
+        RED
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="font-bold text-base tracking-tight text-white">RedPulse AI Studio</h1>
+          <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">2026-10-17 今日早报已更新</span>
+        </div>
+        <p class="text-[11px] text-slate-400">从左到右固定三栏工作流 · 5图横向一字排开 · 纯净无星号文案</p>
+      </div>
+    </div>
+
+    <div class="flex items-center bg-[#141722] p-1 rounded-xl border border-white/5 text-xs">
+      <button onclick="setMainTab('workspace')" id="tabBtnWorkspace" class="px-3.5 py-1.5 rounded-lg font-semibold bg-[#FF2442] text-white transition flex items-center gap-1.5">
+        <span>✨</span> 1. 爆款图文创作台 (左➔右)
+      </button>
+      <button onclick="setMainTab('radar')" id="tabBtnRadar" class="px-3.5 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5">
+        <span>📡</span> 2. 实时全网情报池 (Live)
+      </button>
+      <button onclick="setMainTab('settings')" id="tabBtnSettings" class="px-3.5 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5">
+        <span>👤</span> 3. 账号水印与外观设置
+      </button>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button onclick="copyCompletePost()" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1">
+        <span>📋</span> 复制纯净标题+正文
+      </button>
+      <button onclick="exportToDirectLocalFolder()" title="在 Chrome/Edge 中直接选本地目录生成文件夹" class="bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1">
+        <span>📂</span> 选目录直存文件夹
+      </button>
+      <button onclick="downloadAsFolderZip()" class="xhs-gradient hover:opacity-95 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-lg shadow-rose-600/25 transition flex items-center gap-1.5">
+        <span>📦</span> 打包下载专属文件夹 (含5图+文案)
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== VIEW 1: MAIN WORKSPACE (ALWAYS HORIZONTAL LEFT-TO-RIGHT) ==================== -->
+  <main id="viewWorkspace" class="flex-1 w-full px-6 py-5 horizontal-workbench">
+
+    <!-- Column 1 (Left): Step 1 - Pick Topic / Input Material -->
+    <div class="flex flex-col gap-4">
+
+      <div class="glass-panel rounded-2xl p-4 flex flex-col gap-3 border-rose-500/30">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
+            <span class="text-rose-500">①</span> 第一步(左)：10月17日今日新稿
+          </h2>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">早间刚更</span>
+        </div>
+        <div class="space-y-2" id="presetScenariosList"></div>
+      </div>
+      
+      <div class="glass-panel rounded-2xl p-4 flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+            <span>🎯</span> 或者：粘贴任意素材即时改写
+          </h2>
+          <button onclick="setMainTab('radar')" class="text-[11px] text-rose-400 hover:underline font-medium">去热榜抓新帖 ➔</button>
+        </div>
+
+        <div>
+          <label class="text-[11px] text-slate-400 block mb-1">选题核心事件 / 关键词</label>
+          <input id="inputTopicTitle" type="text" class="w-full bg-[#0B0D13] border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500" placeholder="例如：4个AI通关我的世界 / Linus怒怼封杀AI...">
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-[11px] text-slate-400">原始素材（推文 / 访谈字幕 / Reddit 帖）</label>
+            <button onclick="clearSourceInput()" class="text-[10px] text-slate-500 hover:text-slate-300">清空</button>
+          </div>
+          <textarea id="inputRawText" rows="3" class="w-full bg-[#0B0D13] border border-white/10 rounded-xl p-2.5 text-xs text-slate-200 placeholder-slate-500 leading-relaxed focus:outline-none focus:border-rose-500"></textarea>
+        </div>
+
+        <button id="btnGenerateAll" onclick="generateFullPost()" class="w-full bg-white/10 hover:bg-white/15 border border-white/15 text-white font-bold text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-2">
+          <span>⚡</span>
+          <span id="btnGenerateText">用上方自定义素材重新生成 5 图 + 长文</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Column 2 (Center): Step 2 - Clean Copywriting (No Asterisks!) -->
+    <div class="flex flex-col">
+      <div class="glass-panel rounded-2xl p-5 flex flex-col h-full">
+        
+        <div class="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
+          <div>
+            <h2 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-rose-500">②</span> 第二步(中)：确认标题与正文
+            </h2>
+            <p class="text-[11px] text-slate-400 mt-0.5">已彻底去除多余星号 `**`，复制即可直接发小红书</p>
+          </div>
+          <button onclick="copyCompletePost()" class="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-xs font-bold transition flex items-center gap-1.5">
+            <span>📋</span> 一键复制全文
+          </button>
+        </div>
+
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="text-xs font-semibold text-slate-300">1. 点选最抓人的标题（同时作为导出文件夹名称）：</label>
+            <span id="titleCharCount" class="text-[11px] font-mono text-emerald-400">18 / 20字 (合规)</span>
+          </div>
+          <div id="titleMatrixList" class="space-y-1.5 mb-2"></div>
+          <input id="activeTitleInput" oninput="onActiveTitleEdit(this.value)" type="text" class="w-full bg-[#0B0D13] border border-rose-500/40 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-rose-500">
+        </div>
+
+        <div class="flex-1 flex flex-col">
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="text-xs font-semibold text-slate-300">2. 纯净小红书正文（零星号 · 强分段）：</label>
+            <div class="flex items-center gap-2">
+              <span id="bodyWordCount" class="text-[11px] text-slate-400 font-mono">0 字</span>
+              <button onclick="polishCopyFormat()" class="text-[11px] px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-slate-300 transition">✨ 去星号并美化空行</button>
+            </div>
+          </div>
+          <textarea id="articleBodyInput" oninput="updateWordCount()" class="flex-1 min-h-[420px] w-full bg-[#0B0D13] border border-white/10 rounded-xl p-4 text-[13px] text-slate-100 leading-relaxed focus:outline-none focus:border-rose-500 resize-none"></textarea>
+        </div>
+
+        <div class="mt-3 pt-3 border-t border-white/10">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[11px] text-slate-400">点击追加热门标签：</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="appendTag('#AI新知')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#AI新知</button>
+            <button onclick="appendTag('#人工智能')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#人工智能</button>
+            <button onclick="appendTag('#科技前沿')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#科技前沿</button>
+            <button onclick="appendTag('#硅谷最新动态')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#硅谷最新动态</button>
+            <button onclick="appendTag('#外网搬运')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition">#外网搬运</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Column 3 (Right): Step 3 - 5 Slides Horizontal Ribbon / Single View -->
+    <div class="flex flex-col overflow-hidden">
+      <div class="glass-panel rounded-2xl p-5 flex flex-col h-full">
+        
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-3 border-b border-white/10">
+          <div>
+            <h2 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-rose-500">③</span> 第三步(右)：从左到右预览并导出 5 张配图
+            </h2>
+            <p class="text-[11px] text-slate-400 mt-0.5" id="folderNamePreview">导出文件夹名预览：2026-10-17_4个AI被关进我的世界</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <div class="flex bg-[#0B0D13] p-0.5 rounded-lg border border-white/10 text-[11px]">
+              <button id="btnViewRow" onclick="setSlideViewMode('row')" class="px-2.5 py-1 rounded-md font-bold bg-[#FF2442] text-white transition">↔️ 横向一字排开 (看5张)</button>
+              <button id="btnViewSingle" onclick="setSlideViewMode('single')" class="px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition">🔍 单张放大</button>
+            </div>
+
+            <label class="cursor-pointer px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-200 flex items-center gap-1 transition">
+              <span>🖼️ 插图</span>
+              <input type="file" accept="image/*" class="hidden" onchange="handleSlideImageUpload(event)">
+            </label>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 mb-3 bg-[#0B0D13] p-2 rounded-xl border border-white/5">
+          <span class="text-[11px] text-slate-400 pl-1">切换配色皮肤：</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="setSlideTheme('theme-magazine')" class="theme-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-amber-50 text-stone-900 border border-stone-400">📖 白底杂志风 (最推荐)</button>
+            <button onclick="setSlideTheme('theme-obsidian')" class="theme-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-neutral-900 text-amber-300 border border-amber-500/40">🖤 硅谷黑金</button>
+            <button onclick="setSlideTheme('theme-klein')" class="theme-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#002FA7] text-lime-300 border border-blue-400/40">⚡ 克莱因蓝</button>
+            <button onclick="setSlideTheme('theme-breaking')" class="theme-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-rose-600 text-white">🚨 突发红白报</button>
+            <button onclick="setSlideTheme('theme-cyber')" class="theme-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-indigo-950 text-sky-300 border border-sky-400/40">🌌 极客霓虹</button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex gap-1.5" id="slidePageTabs">
+            <button onclick="switchSlidePage(0)" class="slide-tab px-3 py-1 rounded-lg text-xs font-bold bg-[#FF2442] text-white">P1 视觉封面</button>
+            <button onclick="switchSlidePage(1)" class="slide-tab px-3 py-1 rounded-lg text-xs font-medium bg-white/5 text-slate-400 hover:text-white">P2 情报原贴</button>
+            <button onclick="switchSlidePage(2)" class="slide-tab px-3 py-1 rounded-lg text-xs font-medium bg-white/5 text-slate-400 hover:text-white">P3 核心拆解</button>
+            <button onclick="switchSlidePage(3)" class="slide-tab px-3 py-1 rounded-lg text-xs font-medium bg-white/5 text-slate-400 hover:text-white">P4 深度对比</button>
+            <button onclick="switchSlidePage(4)" class="slide-tab px-3 py-1 rounded-lg text-xs font-medium bg-white/5 text-slate-400 hover:text-white">P5 行动建议</button>
+          </div>
+          <span class="text-[11px] text-slate-400">左右滑动可横向总览 P1➔P5，点卡片文字可直接修改</span>
+        </div>
+
+        <div class="flex-1 flex items-center bg-[#07080C] rounded-2xl p-5 border border-white/5 relative overflow-x-auto">
+          <div id="slidesContainer" class="flex items-center gap-5 mx-auto"></div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==================== VIEW 2: LIVE AI RADAR ==================== -->
+  <section id="viewRadar" class="hidden flex-1 max-w-[1600px] w-full mx-auto px-6 py-6">
+    <div class="glass-panel rounded-2xl p-6">
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-5 mb-6 border-b border-white/10">
+        <div>
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <span>📡</span> 全网 AI 实时情报雷达 (Live Multi-Source Feed)
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">实时直连 Hacker News 与 Reddit AI 社区，拉取此时此刻全球最新的讨论</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <input id="radarSearchQuery" type="text" value="AI OR LLM OR Agent OR Linus" class="w-72 bg-[#0B0D13] border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
+          <select id="radarSourceSelect" class="bg-[#0B0D13] border border-white/15 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none">
+            <option value="hn_new">Hacker News (最新按时间排序)</option>
+            <option value="hn_hot">Hacker News (AI 热门讨论)</option>
+            <option value="reddit_localllama">Reddit r/LocalLLaMA (开源模型玩家)</option>
+            <option value="reddit_singularity">Reddit r/singularity (前沿突破与热议)</option>
+            <option value="reddit_ai">Reddit r/ArtificialIntelligence</option>
+          </select>
+          <button onclick="fetchLiveRadar()" class="xhs-gradient text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1.5">
+            <span>🔄</span> 立即抓取实时热点
+          </button>
+        </div>
+      </div>
+
+      <div id="liveRadarStatus" class="text-xs text-slate-400 mb-4">正在准备连接实时数据源...</div>
+      <div id="liveRadarGrid" class="grid grid-cols-3 gap-4"></div>
+    </div>
+  </section>
+
+  <!-- ==================== VIEW 3: BRAND SETTINGS ==================== -->
+  <section id="viewSettings" class="hidden flex-1 max-w-4xl w-full mx-auto px-6 py-6">
+    <div class="glass-panel rounded-2xl p-6 space-y-6">
+      <div class="border-b border-white/10 pb-4">
+        <h2 class="text-lg font-bold text-white">👤 小红书账号水印与头像配置</h2>
+        <p class="text-xs text-slate-400 mt-1">修改后保存，5 张图底部会自动同步你的名字与小头像</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6">
+        <div class="space-y-4 bg-[#0B0D13] p-5 rounded-2xl border border-white/5">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <span>🏷️</span> 你的小红书个人印记
+          </h3>
+          <div>
+            <label class="text-xs text-slate-300 block mb-1">你的小红书账号名称（自动单行锁定，绝不换行）</label>
+            <input id="cfgAuthorName" type="text" value="akia" class="w-full bg-[#12151E] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
+          </div>
+          <div>
+            <label class="text-xs text-slate-300 block mb-1">底部小圆标（可上传像素头像，不传则显示名字首字母 A）</label>
+            <div class="flex items-center gap-3 mt-1">
+              <label class="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-xs text-white transition">
+                📂 上传头像图片
+                <input type="file" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
+              </label>
+              <button onclick="clearAvatar()" class="text-xs text-slate-400 hover:text-rose-400">恢复首字母圆标</button>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs text-slate-300 block mb-1">底部右侧签名</label>
+            <input id="cfgAuthorBio" type="text" value="外网搬运 ｜ AI八卦 ｜ 工具推荐" class="w-full bg-[#12151E] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
+          </div>
+          <div>
+            <label class="text-xs text-slate-300 block mb-1">卡片顶部期刊栏名称</label>
+            <input id="cfgIssueTag" type="text" value="OVERSEAS AI · 外网一手资讯" class="w-full bg-[#12151E] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
+          </div>
+          <div class="pt-2">
+            <button onclick="saveSettings()" class="w-full xhs-gradient text-white text-xs font-bold py-2.5 rounded-xl shadow-lg transition">
+              💾 保存我的账号印记并返回创作台
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hidden single-card stage for clean 1080x1440 rendering -->
+  <div id="offscreenCaptureStage" style="position:fixed; left:-9999px; top:0; z-index:-1;"></div>
+
+  <!-- Toast Notification -->
+  <div id="toastBox" class="fixed bottom-6 right-6 z-50 hidden px-4 py-3 rounded-xl bg-slate-900/95 border border-rose-500/50 text-white text-xs font-semibold shadow-2xl flex items-center gap-2">
+    <span class="text-rose-400">✨</span>
+    <span id="toastMsg">操作成功</span>
+  </div>
+
+<script>
+  let currentAngle = 'insight';
+  let currentTheme = 'theme-magazine';
+  let activeSlideIndex = 0;
+  let slideViewMode = 'row';
+  let uploadedSlideImages = {};
+
+  const SLIDE_ROLE_NAMES = ['封面', '原帖', '拆解', '对比', '建议'];
+
+  const brandConfig = {
+    authorName: localStorage.getItem('rp_authorName') || 'akia',
+    authorBio: localStorage.getItem('rp_authorBio') || '外网搬运 ｜ AI八卦 ｜ 工具推荐',
+    issueTag: localStorage.getItem('rp_issueTag') || 'OVERSEAS AI · 外网一手资讯',
+    avatarDataUrl: localStorage.getItem('rp_avatarDataUrl') || ''
+  };
+
+  function cleanMarkdownSymbols(text) {
+    return (text || '')
+      .replace(/\*\*([^*]+)\*\*/g, '$1')
+      .replace(/\*([^*]+)\*/g, '$1')
+      .replace(/^#+\s+/gm, '')
+      .replace(/^>\s?/gm, '💬 ');
+  }
+
+  // ==================== TODAY'S FRESH STORIES (2026-10-17 MORNING EDITION) ====================
+  const presetScenarios = [
+    {
+      id: 'oct17-minecraft-agents',
+      category: '🎮 10月17日头版猎奇 · 视觉画面感极强',
+      badge: 'DeepMind 最新实验刷屏',
+      topicTitle: '把4个AI扔进《我的世界》不管它：27小时自己写2783个程序干翻末影龙！',
+      sourceMeta: 'Google DeepMind & HuggingFace 10月16~17日最新战报',
+      rawSnippet: 'Google DeepMind placed four Gemini 4 Argon coding agents in a sandboxed Minecraft survival world and defeated the Ender Dragon from a random seed in 27 hours 14 minutes, writing 2,783 programs and dying 605 times, coordinating only through in-game chat and shared memory.',
+      titles: [
+        '把4个AI扔进我的世界，27小时通关了！',
+        '死了605次写2783个程序！AI打游戏太狠了',
+        '零人工干预！4个AI自己聊天分工干翻末影龙',
+        'DeepMind最新实验：当AI学会自己组队打Boss'
+      ],
+      slides: [
+        {
+          type: 'cover',
+          tag: '10.17 外网刷屏神级实验',
+          headline: '把 4 个 AI 扔进《我的世界》，27小时自己<span class="hl-mark">写代码通关了</span>',
+          subhead: 'Google DeepMind 最新测试：零人类帮忙，死了 605 次、现场手搓 2783 个程序干翻末影龙！',
+          footerMetric: '核心看点：它们甚至只靠游戏里的聊天框互相喊话分工，完全像一支真人小队'
+        },
+        {
+          type: 'quote',
+          tag: '01 / 实验数据直接看傻',
+          sourceTitle: 'Google DeepMind 研究战报',
+          sourceTime: 'Oct 16-17, 2026 · 实测记录',
+          enText: '"Four coding agents placed in a random Minecraft survival world defeated the Ender Dragon in 27h 14m—writing 2,783 programs and dying 605 times, coordinating only via in-game chat."',
+          cnHighlight: '💡 大白话翻译：研究人员把 4 个编程智能体丢进完全随机生成的《我的世界》生存模式里。27 小时 14 分钟后，它们靠自己在游戏聊天框里商量对策，死了 605 次，自己写了 2783 段小程序，硬生生把终极 Boss 末影龙给推平了。',
+          takeaway: '最恐怖的地方：没人教它们怎么走，全靠死出来的教训自己改代码。'
+        },
+        {
+          type: 'points',
+          tag: '02 / 这4个AI是怎么配合的？',
+          title: '比真人队友还靠谱的 3 个逆天细节',
+          items: [
+            { num: '01', name: '不会动作就当场写代码造工具', desc: '遇到挖矿、造船、找要塞等操作，AI 不是按手柄，而是现场写出 2783 个控制脚本自己执行。' },
+            { num: '02', name: '只靠游戏公屏打字聊天分工', desc: '一个去砍树挖铁，一个去下界打烈焰人，谁死了或者缺材料直接在公屏发消息喊队友支援。' },
+            { num: '03', name: '死了 605 次但从不在同一个坑摔倒', desc: '每次掉岩浆或被怪炸死，都会把教训写进共享记忆本，下一次复活立刻改写生存代码。' }
+          ]
+        },
+        {
+          type: 'compare',
+          tag: '03 / 前后代 AI 的跨代对比',
+          title: '以前的 AI 玩游戏 vs 现在的 Agent 小队',
+          leftTitle: '🕹️ 以前的测试（单打独斗背板）',
+          leftItems: [
+            '得先喂几万小时人类高手录像去模仿',
+            '只能干砍树或挖矿一件事，换张地图就懵',
+            '一旦卡在墙角就无限撞墙死循环'
+          ],
+          rightTitle: '🚀 现在的测试（多智能体自治社会）',
+          rightItems: [
+            '随机地图开局，边踩坑边写新程序适应环境',
+            '4 个 AI 自动分化出采集、基建、战斗不同角色',
+            '连续 27 小时超长任务不掉链子，直奔终极目标'
+          ]
+        },
+        {
+          type: 'action',
+          tag: '04 / 这事对咱们意味着啥？',
+          title: '别光看游戏热闹，背后是工作方式的剧变',
+          steps: [
+            '今天是 4 个 AI 在游戏里分工挖矿打龙，明天就是 4 个 AI 在你电脑里分工扒数据、写代码、测 Bug',
+            '未来的核心能力不再是亲手干每一件小活，而是当好这群 AI 小队的“包工头”',
+            '遇到复杂大任务，学会让多个 AI 共享一个“错题本（共享记忆）”，成功率直接翻倍'
+          ],
+          ctaQuestion: '💬 聊聊：如果给你配 4 个能自己聊天配合的 AI 队友，你最想带它们干票什么大的？'
+        }
+      ],
+      articleBody: `今天（10月17日）外网科技圈最火、最让人看得津津有味的一场实验，来自 Google DeepMind 刚刚公布的测试结果：
+他们把 4 个 AI 智能体（Gemini 4 Argon）直接扔进了《我的世界（Minecraft）》的随机生存地图里，然后人类撒手不管了。
+
+结果 27 小时 14 分钟之后，这 4 个 AI 硬生生从零撸树开始，一路杀进末地，把游戏的终极 Boss「末影龙」给干翻通关了！
+
+我把整份实验报告最精彩的数据扒了出来，看完真的后背发凉又觉得太酷了：
+
+📌 一、 三个让人瞠目结舌的实验数字
+
+1️⃣ 死了 605 次，但越死越聪明
+这 4 个 AI 一开始也跟新手玩家一样，掉岩浆、被苦力怕炸、从高处摔死，前前后后一共死了 605 次。但每死一次，它们就会把死因记进“共享小本本”里，绝对不在同一个坑里摔第二次。
+
+2️⃣ 现场手搓了 2783 段程序
+它们玩游戏不是靠手速按键，而是遇到一个新问题（比如怎么自动搭桥、怎么躲避攻击），就当场自己写一段小程序来控制角色。整场游戏下来，4 个 AI 自己写了 2783 个程序脚本！
+
+3️⃣ 纯靠游戏里的聊天框打字商量
+研究人员没有给它们开什么神秘的心灵感应后门，这 4 个 AI 全程就是靠游戏左下角的公屏聊天框打字沟通——谁去挖钻石、谁去下界刷烈焰棒、谁家里缺铁了，全在聊天框里自己分配得明明白白。
+
+💡 二、 为什么大家说这不只是一场游戏？
+
+以前 AI 玩游戏厉害（比如打星际或Dota），靠的是每秒钟几万次的极限微操；
+但《我的世界》完全不同——它是一场长达几十个小时的“超长项目管理”：你得先活下来、搞基建、攒装备、跨维度探险，最后才能打 Boss。
+
+这 4 个 AI 证明了一件事：现在的智能体已经能像一个小型创业团队一样，连续 27 个小时自己拆解目标、自己写工具、互相补位把一件极其复杂的大事干成了。
+
+完整的数据拆解和对比我都做在上面 5 张图里了，左滑就能看！
+
+👇 评论区聊聊：看到 4 个 AI 在游戏里自己聊天组队通关，你觉得离 AI 自己组团开公司还有多远？
+
+#我的世界 #人工智能 #DeepMind #科技前沿 #外网搬运 #AI新知 #游戏日常`
+    },
+    {
+      id: 'oct17-linus-torvalds-ai',
+      category: '💥 10月17日祖师爷开炮 · 极客圈炸锅',
+      badge: 'HN & Reddit 刷屏暴言',
+      topicTitle: 'Linux之父Linus直接开骂：“一刀切封杀AI是蠢货，你也是！”',
+      sourceMeta: 'Linux内核邮件列表 (LKML) & Hacker News 10月16~17日热帖',
+      rawSnippet: 'Linus Torvalds on LKML: "banning AI is stupid and so are you." Amid heated debates at the kernel summit over banning AI-generated code, Linus made clear that AI is just a tool like compilers or editors, and banning a tool just to make a statement is completely useless.',
+      titles: [
+        'Linux之父直接开骂：封杀AI是蠢货，你也是！',
+        '程序员祖师爷发飙了！一针见血点评AI争议',
+        '外网吵翻！Linus怒怼“反AI派”：别拿工具撒气',
+        '封杀AI写代码？看看Linux之父是怎么骂醒众人的'
+      ],
+      slides: [
+        {
+          type: 'cover',
+          tag: '10.17 极客圈头版暴言',
+          headline: 'Linux 之父直接开骂：<span class="hl-mark">封杀 AI 是蠢货</span>，你也是！',
+          subhead: 'Hacker News 今日刷屏：面对社区吵着要“全面禁止 AI 代码”，祖师爷 Linus 终于忍无可忍了',
+          footerMetric: '暴躁老爷子金句：AI 只是个工具，为了摆姿态去封杀一个工具蠢透了'
+        },
+        {
+          type: 'quote',
+          tag: '01 / 祖师爷原话现场',
+          sourceTitle: 'Linus Torvalds · Linux 内核邮件列表 (LKML)',
+          sourceTime: 'Oct 16-17, 2026 · 暴脾气上线',
+          enText: '"Linus Torvalds: \'banning AI is stupid and so are you.\' Given Linus\' stance that it\'s just a tool, it\'s really odd to ban only that one tool just to make a statement."',
+          cnHighlight: '💡 大白话翻译：这两天开源圈又在吵要不要明令禁止用 AI 写代码。Linux 与 Git 的缔造者 Linus Torvalds 直接在邮件列表里回怼了一句：“禁止 AI 是愚蠢的，而你也是！”他直言 AI 就是个工具，为了表忠心去封杀一个工具毫无意义。',
+          takeaway: '吃瓜背景：老爷子守护 Linux 三十多年，专治各种矫情和形式主义。'
+        },
+        {
+          type: 'points',
+          tag: '02 / 为什么 Linus 会突然发火？',
+          title: '还原这场大吵架背后的 3 个真相',
+          items: [
+            { num: '01', name: '没完没了的“反AI政治正确”让他烦透了', desc: '刚开完内核峰会，又有人跳出来要求立规矩封杀 AI，老爷子听腻了这种车轱辘话直接开麦。' },
+            { num: '02', name: '只看代码好坏，不看你用什么键盘敲的', desc: '烂代码就算是纯手敲的也是垃圾；好代码就算用了 AI 辅助，只要人把关负责就没毛病。' },
+            { num: '03', name: '一刀切禁令根本没法执行，纯属自嗨', desc: '根本没人能 100% 鉴定一行代码背后有没有问过 AI，立这种虚头巴脑的规矩纯属浪费生命。' }
+          ]
+        },
+        {
+          type: 'compare',
+          tag: '03 / 外网评论区两派吵翻',
+          title: '支持 Linus 派 vs 担忧 AI 派的激烈交锋',
+          leftTitle: '🛡️ 挺 Linus 派（实用主义老兵）',
+          leftItems: [
+            '当年高级语言和自动补全出来时也有人骂',
+            '该罚的是“不看代码就乱交垃圾的人”，不是工具',
+            '干活只看最终质量，搞洁癖禁令毫无意义'
+          ],
+          rightTitle: '⚠️ 担忧派（被垃圾投稿折磨的维护者）',
+          rightItems: [
+            '很多新手用 AI 生成几百行漏洞百出的代码来刷存在感',
+            '大模型黑盒生成跟传统编译器根本不是一回事',
+            '审代码的维护者快被海量的 AI 灌水帖淹没了'
+          ]
+        },
+        {
+          type: 'action',
+          tag: '04 / 给普通打工人的启发',
+          title: '从祖师爷的暴言里，咱们能悟出啥？',
+          steps: [
+            '别陷入“用 AI 羞耻症”：不管是写方案还是写代码，能把活干漂亮就是硬道理',
+            '工具不背锅，人要为结果兜底：千万别把没检查过的 AI 半成品直接甩给同事或老板',
+            '少参加网上“AI到底行不行”的口水仗，悄悄用它把自己的活早点干完下班最实在'
+          ],
+          ctaQuestion: '💬 聊聊：你支持 Linus“不管是人是AI，活干好就行”的观点吗？'
+        }
+      ],
+      articleBody: `今天（10月17日）程序员圈和 Reddit 上最热闹的瓜，莫过于计算机界的活传奇、Linux 和 Git 的缔造者 Linus Torvalds 又双叒叕骂人了！
+
+而且这次骂得极其直接，原话标题直接在 Hacker News 刷屏：
+💬 “Banning AI is stupid and so are you.”（封杀 AI 是愚蠢的，而你也是！）
+
+很多不混技术圈的朋友可能不知道，Linus 老爷子向来以“暴脾气、只认逻辑不认人情”著称。这次到底是谁把他惹毛了？我把邮件列表和评论区的前因后果扒了一遍：
+
+📌 一、 起因：没完没了的“封杀 AI”争论
+
+最近在开源社区和刚结束的内核峰会上，总有一批人反复提议：应该立下一条死规矩，严禁任何人在提交代码时使用 AI 工具。
+结果这话传到 Linus 耳朵里，老爷子积攒了很久的不耐烦直接爆发了。
+
+他的核心逻辑非常干脆：
+1️⃣ AI 本质上就是一个工具，跟你的代码编辑器、编译器没什么两样。
+2️⃣ 如果一个人交上来一坨跑不通的垃圾代码，那是因为这个人蠢、不负责任，你直接把他的代码拒了就行，去封杀工具干什么？
+3️⃣ 明知道这种禁令根本没法查、没法管，纯粹为了“摆姿态、喊口号”去搞一刀切，除了感动自己没有任何用处。
+
+💡 二、 评论区为什么也吵翻了？
+
+虽然大家都喜欢看老爷子怼人，但评论区里也有不少项目维护者倒出了苦水：
+▪️ 支持者觉得：话糙理不糙！不管黑猫白猫，能写出稳定好用的程序就是好猫。
+▪️ 反对者吐槽：现在很多菜鸟连代码都看不懂，拿 AI 一秒钟生成几百行似是而非的 Bug 往上交，害得审代码的老手每天像在淘粪。
+
+📌 三、 这事给咱们普通人的实在参考
+
+其实各行各业现在都一样——有人视 AI 如洪水猛兽，有人拿 AI 敷衍塞责。
+最聪明的做法就是 Linus 的态度：大大方方把 AI 当成趁手的工具用，但永远由你自己对交出去的东西做最后把关！
+
+老爷子的原话和两派交锋我都整理在上面 5 张图里了，左滑直接吃瓜！
+
+👇 评论区聊聊：你们公司或学校现在对用 AI 是鼓励还是限制？
+
+#Linus #程序员日常 #外网吃瓜 #人工智能 #开源社区 #科技热议 #大实话`
+    },
+    {
+      id: 'oct17-sakana-ai-scientist',
+      category: '🔬 10月17日重磅开源 · 科研党狂喜',
+      badge: 'GitHub 刚开源 · 论文中顶会',
+      topicTitle: '只给一个文档，AI自己跑实验写论文还中了顶会！Sakana开源第3代“AI科学家”',
+      sourceMeta: 'Sakana AI 官方 & GitHub Apache 2.0 开源发布',
+      rawSnippet: 'Sakana AI open-sources Agentic Scientist v3 on GitHub under Apache 2.0 alongside an 88-page paper. The scaffold turns a task.md into experiments, ablations, figures and a full paper inside Docker; a version co-authored an oral paper accepted at ALIFE 2026.',
+      titles: [
+        '只给个文档，AI自己做实验写论文还中了顶会！',
+        'Sakana刚把第3代“AI科学家”免费开源了！',
+        '科研党看傻！从跑实验到画图写论文全自动',
+        '写个task.md就能出论文？外网爆火的开源神器'
+      ],
+      slides: [
+        {
+          type: 'cover',
+          tag: '10.17 GitHub 开源王炸',
+          headline: '只喂一个文档，AI 自己跑实验写论文还<span class="hl-mark">中了顶会</span>！',
+          subhead: '日本独角兽 Sakana 刚刚免费开源「Agentic Scientist v3」：把科研从头到尾做成全自动流水线',
+          footerMetric: '硬核战绩：它参与撰写的论文，刚刚被 ALIFE 2026 国际顶会录用为口头报告！'
+        },
+        {
+          type: 'quote',
+          tag: '01 / 刚刚放出的开源情报',
+          sourceTitle: 'Sakana AI 官方技术发布',
+          sourceTime: 'Oct 15-17, 2026 · Apache 2.0 协议',
+          enText: '"Sakana AI open-sources Agentic Scientist v3 on GitHub alongside an 88-page paper. The scaffold turns a simple task.md into code experiments, ablations, figures and a full paper inside Docker."',
+          cnHighlight: '💡 大白话翻译：由前谷歌大脑大神创立的 Sakana AI，刚刚在 GitHub 上用最宽松的 Apache 2.0 协议免费开源了第三代全自动科研系统。你只需写一个极其简单的 task.md 任务说明，它就能在隔离容器里自己写代码、跑对比实验、画架构图，最后生成一篇完整论文。',
+          takeaway: '真刀真枪：不是玩具演示，它刚拿下了今年国际大会的 Oral（口头报告）录用。'
+        },
+        {
+          type: 'points',
+          tag: '02 / 它是怎么自己做科研的？',
+          title: '全自动“AI 科学家 v3”的 3 步闭环',
+          items: [
+            { num: '01', name: '读懂你的 task.md，自己设计消融实验', desc: '不用你手把手写代码，给它一个方向和数据，多个编程 Agent 会自动商量出实验方案并开跑。' },
+            { num: '02', name: '发现数据不对，自己改代码重跑', desc: '如果第一轮实验跑出来的指标拉胯，它会像真正的研究生一样看报错日志、改参数、做对照实验。' },
+            { num: '03', name: '内置 AutoIllustrate：自动画出顶会级配图', desc: '不仅能写正文，还专门配了自动绘图模块，把实验数据和系统架构直接画成干净漂亮的科研图表。' }
+          ]
+        },
+        {
+          type: 'compare',
+          tag: '03 / 前后三代进化有多快？',
+          title: '初代 AI 写论文 vs 第三代 Agentic Scientist',
+          leftTitle: '🕰️ 以前（只会凑字数的水文机器）',
+          leftItems: [
+            '只能帮人润色一下英文语法或拼凑摘要',
+            '实验数据稍微复杂一点就开始瞎编乱造',
+            '画出来的图丑得一眼假，根本过不了同行评审'
+          ],
+          rightTitle: '🚀 现在的 v3（真正在容器里跑代码实测）',
+          rightItems: [
+            '所有结论都来自 Docker 容器里真刀真枪跑出来的代码',
+            '自带多智能体交叉互审，先在内部把漏洞挑光',
+            '连带 88 页技术报告与全套源码完全免费公开'
+          ]
+        },
+        {
+          type: 'action',
+          tag: '04 / 普通人怎么借力这套工具？',
+          title: '哪怕不发学术论文，这 3 个思路也极有用',
+          steps: [
+            '做毕业设计、写行业分析或测代码的朋友，可以直接去 GitHub 搜 Agentic Scientist 拿它的框架改着用',
+            '学它“用一个 task.md 驱动全流程”的习惯：先把目标、评价标准写进一个文档，再让 AI 动手',
+            '用它的 AutoIllustrate 思路，让 AI 先写绘图代码再转成高清架构图，比纯生图准得多'
+          ],
+          ctaQuestion: '💬 聊聊：如果 AI 连设计实验、跑数据、画图写论文都能一条龙干完，研究生的日常会变成啥样？'
+        }
+      ],
+      articleBody: `如果说前两天大家还在争论 AI 写代码到底靠不靠谱，那日本最火的 AI 独角兽 Sakana AI 刚刚放出的开源大招，直接把“全自动做科研”往前推了一大步！
+
+他们刚刚在 GitHub 上免费开源了第三代全自动科研系统——「The Agentic Scientist v3」（采用最良心的 Apache 2.0 开源协议，还附带了一篇足足 88 页的详细技术报告）。
+
+最让人服气的是：这套系统不是自嗨，它深度参与撰写的一篇研究论文，刚刚真刀真枪通过了同行盲审，被 2026 国际人工生命大会（ALIFE 2026）选为了 Oral（口头报告）！
+
+📌 一、 它到底是怎么把科研做成“流水线”的？
+
+以前我们用 AI 写论文，顶多是让它润色一下英文、改改语病。
+但这次的 v3 版本完全是另一个物种：
+1️⃣ 你只需要给它准备一个写明研究目标和背景的「task.md」文档；
+2️⃣ 系统会在安全的 Docker 容器里，调度多个编程 Agent 自己写代码、自己跑实验、甚至自己设计消融对比（Ablation Study）；
+3️⃣ 跑出真实数据后，它内置的「AutoIllustrate」模块会自动把枯燥的数据画成非常漂亮的科研架构图和折线图，最后排版成一篇完整的学术论文。
+
+💡 二、 为什么它不会“一本正经胡说八道”？
+
+因为它的每一句结论，都必须对应容器里真实跑出来的代码结果！
+如果实验报错或者数据不理想，它不会去编造假数据，而是像一个不知疲倦的理工科研究生一样，顺着报错日志去改代码、调参数，直到跑出经得起检验的结果。
+
+📌 三、 普通学生和打工人能拿它干嘛？
+
+哪怕你不发顶会论文，这套刚刚开源的代码库也有两个特别香的用处：
+▪️ 拿它自动跑数据分析与周报：给它一堆杂乱的业务表格和一个目标文档，让它自己写 Python 跑出结论并画好图表。
+▪️ 照抄它的自动画图模块（AutoIllustrate）：平时写方案、做 PPT 缺高颜值逻辑架构图时，这套自动生成矢量图的方案简直是救星。
+
+全套原理解析我都整理在上面 5 张卡片里了，左滑就能看详情！
+
+👇 评论区聊聊：你觉得未来写毕业论文或研究报告，人最核心的工作会变成什么？
+
+#科研工具 #研究生日常 #开源项目 #人工智能 #论文写作 #科技前沿 #外网搬运`
+    },
+    {
+      id: 'oct17-chatgpt-ads-privacy',
+      category: '🕵️ 10月17日外媒实测揭秘 · 人人相关',
+      badge: '404Media 实测扒皮',
+      topicTitle: '实锤了！外媒实测扒出：ChatGPT 正根据你聊的私密心事和手机号精准推广告',
+      sourceMeta: '404 Media & AI Weekly 10月16~17日深度调查',
+      rawSnippet: '404 Media test of ChatGPT new ad platform found advertisers can inject ads targeted at specific users via uploaded phone number, email or device identifier, and OpenAI also targets on the prompts users type across 1 billion monthly active users.',
+      titles: [
+        '实锤！ChatGPT正拿你聊的心事精准推广告',
+        '别把AI当树洞了！外媒扒出ChatGPT广告内幕',
+        '你给AI发的每一句话，都成了广告商的靶子？',
+        '外媒实测曝光：AI精准投广告比搜索引擎更狠'
+      ],
+      slides: [
+        {
+          type: 'cover',
+          tag: '10.17 外媒实测大扒皮',
+          headline: '别拿 AI 当树洞了！外媒实测：你聊的心事正被用来<span class="hl-mark">精准推广告</span>',
+          subhead: '404 Media 最新暗访测试：广告商不仅能按你刚输入的提示词投流，还能直接上传手机号锁定你！',
+          footerMetric: '扎心提醒：你以为是在跟贴心助手聊私房话，其实背后站着一排记笔记的推销员'
+        },
+        {
+          type: 'quote',
+          tag: '01 / 外媒实测抓到的铁证',
+          sourceTitle: '404 Media 调查记者实测报告',
+          sourceTime: 'Oct 15-17, 2026 · 独家测试',
+          enText: '"404 Media\'s own test of ChatGPT\'s ad platform found advertisers can inject ads targeted at specific users via uploaded phone number or email, and target directly on the prompts users type."',
+          cnHighlight: '💡 大白话翻译：知名科技调查媒体 404 Media 自己注册成广告主去测试了 ChatGPT 的新广告后台。结果发现：广告商不仅能直接根据你正在输入的聊天内容（Prompts）插播广告，甚至能上传一份手机号和邮箱名单，点名道姓只给特定的人投广告！',
+          takeaway: '细思极恐：以前搜关键词才会被盯上，现在连跟 AI 吐个槽都被明码标价了。'
+        },
+        {
+          type: 'points',
+          tag: '02 / 为什么说 AI 广告比传统广告更狠？',
+          title: '外媒扒出的 3 个让人后背发凉的细节',
+          items: [
+            { num: '01', name: '以前你只搜“买什么”，现在你跟 AI 聊“所有软肋”', desc: '大家习惯把感情危机、健康焦虑、财务困境全倒给 AI，这些私密提示词成了最精准的商业画像。' },
+            { num: '02', name: '支持手机号、邮箱与设备号直接匹配', desc: '只要商家手里有你的手机号或邮箱，就能在后台直接勾选，在你和 AI 聊天时精准塞入推广内容。' },
+            { num: '03', name: 'Meta 也在同一天修改霸王条款', desc: '外媒同时爆出 Meta 10月30日生效的新规：只要绑定了商业账号的网站，全都会被强制爬取拿去喂 AI。' }
+          ]
+        },
+        {
+          type: 'compare',
+          tag: '03 / 隐私安全感对比',
+          title: '云端免费聊天框 vs 本地/隐私优先方案',
+          leftTitle: '📢 靠广告变现的云端大厂',
+          leftItems: [
+            '你输入的每一句提示词都在帮它完善你的消费画像',
+            '手机号、邮箱与聊天记录在后台被交叉关联',
+            '回答里可能不知不觉夹带了金主爸爸的软广推荐'
+          ],
+          rightTitle: '🔒 保护隐私的聪明用法',
+          rightItems: [
+            '在设置里手动关掉“用我的数据训练与个性化广告”',
+            '绝对不在提示词里写真实姓名、手机号、身份证与合同原件',
+            '真正敏感的私密文档，用本地开源小模型断网处理'
+          ]
+        },
+        {
+          type: 'action',
+          tag: '04 / 咱们普通人怎么防一手？',
+          title: '今天花 1 分钟就能做好的 3 件小事',
+          steps: [
+            '检查你常用 AI 软件的「隐私/数据控制（Data Controls）」设置，把训练与广告追踪开关关掉',
+            '发给 AI 的材料先做“脱敏”：把真实人名、公司名和金额换成 A公司、某甲',
+            '当 AI 突然热情向你推荐某个具体品牌或服务时，多留个心眼——那可能是一条定向广告'
+          ],
+          ctaQuestion: '💬 聊聊：如果 AI 免费但会在聊天里塞精准广告，你能接受吗？'
+        }
+      ],
+      articleBody: `今天（10月17日）外网有一篇调查报道引起了全网警惕，所有平时喜欢把 AI 当“私人树洞”或“工作秘书”的朋友都应该看一眼！
+
+海外知名科技调查媒体 404 Media 的记者，自己乔装成广告主，去实测了 ChatGPT 最新上线的广告投放后台，结果扒出了几个让人后背发凉的真相。
+
+📌 一、 记者实测发现了什么？
+
+以前我们用搜索引擎，搜了“牙疼”，网页旁边会出现牙科广告，这大家早就习惯了。
+但这次记者在后台实测发现，AI 时代的广告精准度直接上了一个台阶：
+1️⃣ 直接按你聊的「提示词（Prompts）」实时狙击
+哪怕你只是在跟 AI 倾诉最近失眠、焦虑、或者在聊某段感情烦恼，广告系统都能直接捕捉你字里行间的情绪和需求，精准推送相关产品。
+
+2️⃣ 支持上传手机号和邮箱“点名投流”
+实测发现，广告商可以直接往后台上传一份包含手机号、电子邮箱或设备 ID 的名单，把广告精准注射给特定的目标人群。
+
+💡 二、 为什么大家对“AI 塞广告”反应这么大？
+
+因为绝大多数人对待搜索引擎和对待 AI 的防备心是完全不一样的！
+我们在搜索框里只会敲两三个干巴巴的词；但在跟 AI 聊天时，很多人会把自己的真实工资、家庭矛盾、体检报告、甚至公司的机密合同竹筒倒豆子一样全喂给它。
+一旦这些最深层的隐私变成了广告商眼里的“精准靶子”，杀伤力比传统网页弹窗大太多了。
+
+📌 三、 咱们普通用户怎么保护自己？（3个实用习惯）
+
+1️⃣ 别把真实身份信息喂给对话框：不管是写简历、审合同还是聊心事，养成习惯先把真实姓名、电话、公司名替换成化名。
+2️⃣ 随手关掉后台开关：去你常用 AI 工具的「设置 - 数据控制（Data Controls）」里，把“允许使用对话改进模型”和个性化广告选项统统关掉。
+3️⃣ 警惕“恰饭回答”：以后当 AI 突然特别热情地给你安利某一个冷门牌子时，别全信，那可能还真是一条付费推广。
+
+我已经把这次外媒实测的细节和防坑指南整理在上面 5 张图里了，建议大家存下来提个醒！
+
+👇 评论区聊聊：你平时跟 AI 聊天时，会有所保留吗？
+
+#ChatGPT #隐私安全 #人工智能 #外网爆料 #科技新知 #互联网内幕 #大实话`
+    }
+  ];
+
+  let currentPostData = JSON.parse(JSON.stringify(presetScenarios[0]));
+
+  window.addEventListener('DOMContentLoaded', () => {
+    loadSettingsToInputs();
+    renderPresetScenarios();
+    loadScenarioIntoStudio(currentPostData);
+    fetchLiveRadar();
+  });
+
+  function sanitizeFilename(str) {
+    return (str || '小红书笔记')
+      .replace(/[\\/:*?"<>|！!？?，,。、·\s]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .slice(0, 18);
+  }
+
+  function getTodayDateString() {
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function getCurrentFolderName() {
+    const rawTitle = document.getElementById('activeTitleInput')?.value || currentPostData.topicTitle || '小红书笔记';
+    return `${getTodayDateString()}_${sanitizeFilename(rawTitle)}`;
+  }
+
+  function updateFolderNamePreview() {
+    const el = document.getElementById('folderNamePreview');
+    if (el) {
+      el.innerText = `📁 导出文件夹名预览：${getCurrentFolderName()}/ (内含 01~05 命好名的图片 + 文案.txt)`;
+    }
+  }
+
+  function showToast(msg) {
+    const box = document.getElementById('toastBox');
+    document.getElementById('toastMsg').innerText = msg;
+    box.classList.remove('hidden');
+    setTimeout(() => box.classList.add('hidden'), 3500);
+  }
+
+  function setMainTab(tab) {
+    ['workspace', 'radar', 'settings'].forEach(t => {
+      const view = document.getElementById('view' + t.charAt(0).toUpperCase() + t.slice(1));
+      const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+      if (t === tab) {
+        view.classList.remove('hidden');
+        if (btn) btn.className = "px-3.5 py-1.5 rounded-lg font-semibold bg-[#FF2442] text-white transition flex items-center gap-1.5";
+      } else {
+        view.classList.add('hidden');
+        if (btn) btn.className = "px-3.5 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5";
+      }
+    });
+  }
+
+  function setSlideViewMode(mode) {
+    slideViewMode = mode;
+    document.getElementById('btnViewRow').className = mode === 'row'
+      ? "px-2.5 py-1 rounded-md font-bold bg-[#FF2442] text-white transition"
+      : "px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition";
+    document.getElementById('btnViewSingle').className = mode === 'single'
+      ? "px-2.5 py-1 rounded-md font-bold bg-[#FF2442] text-white transition"
+      : "px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition";
+    renderActiveSlide();
+  }
+
+  function renderPresetScenarios() {
+    const container = document.getElementById('presetScenariosList');
+    container.innerHTML = presetScenarios.map((item, idx) => `
+      <div onclick="selectPresetScenario(${idx})" class="p-3 rounded-xl bg-[#0B0D13] hover:bg-white/[0.04] border ${item.id === currentPostData.id ? 'border-rose-500 bg-rose-950/20' : 'border-white/10'} hover:border-rose-500/50 cursor-pointer transition group">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[11px] font-bold text-rose-400">${item.category}</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-slate-400">${item.badge}</span>
+        </div>
+        <div class="text-xs font-semibold text-slate-100 group-hover:text-white line-clamp-1">${item.topicTitle}</div>
+        <div class="text-[10px] text-slate-500 mt-1 flex justify-between">
+          <span>${item.sourceMeta}</span>
+          <span class="text-rose-400 font-semibold">点击载入 ➔</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function selectPresetScenario(idx) {
+    currentPostData = JSON.parse(JSON.stringify(presetScenarios[idx]));
+    renderPresetScenarios();
+    loadScenarioIntoStudio(currentPostData);
+    showToast(`已载入「${currentPostData.category}」全套 5 张图文与成稿`);
+  }
+
+  function clearSourceInput() {
+    document.getElementById('inputTopicTitle').value = '';
+    document.getElementById('inputRawText').value = '';
+  }
+
+  function loadScenarioIntoStudio(data) {
+    document.getElementById('inputTopicTitle').value = data.topicTitle || '';
+    document.getElementById('inputRawText').value = data.rawSnippet || '';
+
+    const titleList = document.getElementById('titleMatrixList');
+    titleList.innerHTML = (data.titles || []).map((t, i) => {
+      const len = t.length;
+      const badgeColor = len <= 20 ? 'text-emerald-400 bg-emerald-500/10' : 'text-amber-400 bg-amber-500/10';
+      return `
+        <div onclick="selectTitleVariant(${i})" class="px-3 py-2 rounded-xl bg-[#0B0D13] border border-white/10 hover:border-rose-500/50 cursor-pointer flex items-center justify-between gap-2 group transition">
+          <span class="text-xs font-medium text-slate-200 group-hover:text-white">${t}</span>
+          <span class="text-[10px] font-mono px-1.5 py-0.5 rounded ${badgeColor} shrink-0">${len}字</span>
+        </div>
+      `;
+    }).join('');
+
+    const firstTitle = (data.titles && data.titles[0]) || data.topicTitle;
+    document.getElementById('activeTitleInput').value = firstTitle;
+    updateTitleCounter(firstTitle);
+    updateFolderNamePreview();
+
+    document.getElementById('articleBodyInput').value = cleanMarkdownSymbols(data.articleBody || '');
+    updateWordCount();
+    renderActiveSlide();
+  }
+
+  function selectTitleVariant(idx) {
+    const title = currentPostData.titles[idx];
+    document.getElementById('activeTitleInput').value = title;
+    updateTitleCounter(title);
+    updateFolderNamePreview();
+    if (currentPostData.slides && currentPostData.slides[0]) {
+      currentPostData.slides[0].headline = `<span class="hl-mark">${title}</span>`;
+      renderActiveSlide();
+    }
+  }
+
+  function onActiveTitleEdit(val) {
+    updateTitleCounter(val);
+    updateFolderNamePreview();
+    if (currentPostData.slides && currentPostData.slides[0]) {
+      currentPostData.slides[0].headline = val;
+      renderActiveSlide();
+    }
+  }
+
+  function updateTitleCounter(val) {
+    const len = (val || '').length;
+    const el = document.getElementById('titleCharCount');
+    if (len <= 20) {
+      el.innerText = `${len} / 20字 (合规)`;
+      el.className = "text-[11px] font-mono text-emerald-400";
+    } else {
+      el.innerText = `${len} / 20字 (超长易被截断)`;
+      el.className = "text-[11px] font-mono text-rose-400 font-bold";
+    }
+  }
+
+  function updateWordCount() {
+    const text = document.getElementById('articleBodyInput').value || '';
+    document.getElementById('bodyWordCount').innerText = `${text.length} 字`;
+  }
+
+  function appendTag(tag) {
+    const area = document.getElementById('articleBodyInput');
+    area.value = area.value.trimEnd() + ' ' + tag;
+    updateWordCount();
+    showToast(`已追加标签 ${tag}`);
+  }
+
+  function polishCopyFormat() {
+    const area = document.getElementById('articleBodyInput');
+    const cleaned = cleanMarkdownSymbols(area.value);
+    let lines = cleaned.split('\n').map(l => l.trim()).filter(Boolean);
+    area.value = lines.join('\n\n');
+    updateWordCount();
+    showToast('✨ 已清除所有多余星号并优化段落空行！');
+  }
+
+  function copyCompletePost() {
+    const title = cleanMarkdownSymbols(document.getElementById('activeTitleInput').value.trim());
+    const body = cleanMarkdownSymbols(document.getElementById('articleBodyInput').value.trim());
+    document.getElementById('articleBodyInput').value = body;
+    const full = `${title}\n\n${body}`;
+    navigator.clipboard.writeText(full).then(() => {
+      showToast('✅ 已复制无星号纯净标题+正文！可直接粘贴至小红书');
+    });
+  }
+
+  function setSlideTheme(themeName) {
+    currentTheme = themeName;
+    renderActiveSlide();
+  }
+
+  function switchSlidePage(pageIdx) {
+    activeSlideIndex = pageIdx;
+    document.querySelectorAll('.slide-tab').forEach((btn, idx) => {
+      if (idx === pageIdx) {
+        btn.className = "slide-tab px-3 py-1 rounded-lg text-xs font-bold bg-[#FF2442] text-white";
+      } else {
+        btn.className = "slide-tab px-3 py-1 rounded-lg text-xs font-medium bg-white/5 text-slate-400 hover:text-white";
+      }
+    });
+    if (slideViewMode === 'row') {
+      const targetCard = document.getElementById(`slideCard_${pageIdx}`);
+      if (targetCard) targetCard.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    } else {
+      renderActiveSlide();
+    }
+  }
+
+  function handleSlideImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      uploadedSlideImages[activeSlideIndex] = evt.target.result;
+      renderActiveSlide();
+      showToast(`已将配图插入第 P${activeSlideIndex + 1} 页卡片！`);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeSlideImage(idx) {
+    delete uploadedSlideImages[idx];
+    renderActiveSlide();
+  }
+
+  function handleAvatarUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      brandConfig.avatarDataUrl = evt.target.result;
+      localStorage.setItem('rp_avatarDataUrl', brandConfig.avatarDataUrl);
+      renderActiveSlide();
+      showToast('✅ 已将你的头像设为卡片底部专属印记！');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearAvatar() {
+    brandConfig.avatarDataUrl = '';
+    localStorage.removeItem('rp_avatarDataUrl');
+    renderActiveSlide();
+    showToast('已恢复为名字首字母圆标');
+  }
+
+  function buildSlideHTML(slide, pageIndex, totalPages, customId) {
+    const cardId = customId || `slideCard_${pageIndex}`;
+    const pageNumStr = `0${pageIndex + 1} / 0${totalPages}`;
+    const customImg = uploadedSlideImages[pageIndex];
+    const imgBlock = customImg ? `
+      <div class="relative my-2 rounded-xl overflow-hidden border border-current/15 max-h-[135px] group">
+        <img src="${customImg}" class="w-full h-[135px] object-cover" />
+        <button onclick="removeSlideImage(${pageIndex})" class="absolute top-1.5 right-1.5 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition">移除图片</button>
+      </div>
+    ` : '';
+
+    const cleanName = (brandConfig.authorName || 'akia').trim();
+    const firstChar = (cleanName.replace(/^@/, '').charAt(0) || 'A').toUpperCase();
+    const avatarBadgeHTML = brandConfig.avatarDataUrl
+      ? `<img src="${brandConfig.avatarDataUrl}" class="w-5 h-5 rounded-full object-cover shrink-0 border border-current/20" />`
+      : `<span class="w-4 h-4 rounded-full xhs-red text-white font-black text-[9px] badge-circle">${firstChar}</span>`;
+
+    const topHeader = `
+      <div class="flex items-center justify-between text-[10px] font-mono tracking-wider opacity-75 pb-2.5 border-b border-current/15">
+        <span contenteditable="true" class="font-bold leading-none nowrap-lock">${brandConfig.issueTag}</span>
+        <span class="font-bold leading-none nowrap-lock">${pageNumStr}</span>
+      </div>
+    `;
+
+    const bottomFooter = `
+      <div class="pt-2.5 border-t border-current/15 flex items-center justify-between gap-2 text-[10px]">
+        <div class="flex items-center gap-1.5 nowrap-lock">
+          ${avatarBadgeHTML}
+          <span contenteditable="true" class="font-bold leading-none nowrap-lock">@${cleanName.replace(/^@/, '')}</span>
+        </div>
+        <span contenteditable="true" class="opacity-70 text-[9.5px] leading-none nowrap-lock truncate">${brandConfig.authorBio}</span>
+      </div>
+    `;
+
+    let middleBody = '';
+
+    if (slide.type === 'cover') {
+      middleBody = `
+        <div class="my-auto py-2 flex flex-col gap-3">
+          <div class="flex items-center">
+            <span contenteditable="true" class="pill-tag text-[10.5px] font-extrabold uppercase tracking-wide">${slide.tag || 'DEEP DIVE'}</span>
+          </div>
+          <h1 contenteditable="true" class="text-[23px] font-black leading-[1.3] tracking-tight">${slide.headline}</h1>
+          <p contenteditable="true" class="text-[12px] opacity-80 leading-relaxed font-medium">${slide.subhead}</p>
+          ${imgBlock}
+          <div class="sub-box rounded-xl p-3 mt-1">
+            <div class="text-[10px] font-bold uppercase tracking-wider accent-color mb-1 leading-none nowrap-lock">⚡ 省流核心结论</div>
+            <div contenteditable="true" class="text-[11.5px] font-semibold leading-snug">${slide.footerMetric}</div>
+          </div>
+        </div>
+      `;
+    } else if (slide.type === 'quote') {
+      middleBody = `
+        <div class="my-auto py-1 flex flex-col gap-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span contenteditable="true" class="pill-tag text-[10.5px] font-bold">${slide.tag}</span>
+            <span contenteditable="true" class="text-[10px] opacity-60 font-mono leading-none nowrap-lock">${slide.sourceTime}</span>
+          </div>
+          <div class="sub-box rounded-xl p-3 space-y-2">
+            <div class="flex items-center gap-2 border-b border-current/10 pb-2">
+              <div class="w-5 h-5 rounded-full bg-sky-500 text-white font-bold text-[10px] badge-circle">𝕏</div>
+              <div contenteditable="true" class="text-[11px] font-bold leading-none nowrap-lock">${slide.sourceTitle}</div>
+            </div>
+            <p contenteditable="true" class="text-[11px] font-mono opacity-85 leading-relaxed italic">${slide.enText}</p>
+          </div>
+          ${imgBlock}
+          <div class="sub-box rounded-xl p-3">
+            <p contenteditable="true" class="text-[12px] font-bold leading-relaxed">${slide.cnHighlight}</p>
+          </div>
+          <div contenteditable="true" class="text-[11px] font-semibold accent-color px-1 leading-snug">
+            🎯 ${slide.takeaway}
+          </div>
+        </div>
+      `;
+    } else if (slide.type === 'points') {
+      const itemsHTML = (slide.items || []).map(it => `
+        <div class="sub-box rounded-xl p-2.5 flex gap-2.5 items-start">
+          <span class="pill-tag text-[10px] font-mono font-black shrink-0">${it.num}</span>
+          <div>
+            <div contenteditable="true" class="text-[12px] font-extrabold leading-snug mb-0.5">${it.name}</div>
+            <div contenteditable="true" class="text-[10.5px] opacity-80 leading-normal">${it.desc}</div>
+          </div>
+        </div>
+      `).join('');
+      middleBody = `
+        <div class="my-auto py-1 flex flex-col gap-2">
+          <div class="flex flex-col items-start gap-1.5">
+            <span contenteditable="true" class="pill-tag text-[10.5px] font-bold">${slide.tag}</span>
+            <h2 contenteditable="true" class="text-[17px] font-black leading-snug">${slide.title}</h2>
+          </div>
+          ${imgBlock}
+          <div class="space-y-2 mt-1">${itemsHTML}</div>
+        </div>
+      `;
+    } else if (slide.type === 'compare') {
+      const leftList = (slide.leftItems || []).map(li => `<li contenteditable="true" class="text-[10.5px] leading-snug">• ${li}</li>`).join('');
+      const rightList = (slide.rightItems || []).map(ri => `<li contenteditable="true" class="text-[10.5px] font-medium leading-snug">• ${ri}</li>`).join('');
+      middleBody = `
+        <div class="my-auto py-1 flex flex-col gap-2.5">
+          <div class="flex flex-col items-start gap-1.5">
+            <span contenteditable="true" class="pill-tag text-[10.5px] font-bold">${slide.tag}</span>
+            <h2 contenteditable="true" class="text-[17px] font-black leading-snug">${slide.title}</h2>
+          </div>
+          ${imgBlock}
+          <div class="sub-box rounded-xl p-3 opacity-80">
+            <div contenteditable="true" class="text-[11.5px] font-extrabold mb-1.5 leading-snug">${slide.leftTitle}</div>
+            <ul class="space-y-1">${leftList}</ul>
+          </div>
+          <div class="sub-box rounded-xl p-3">
+            <div contenteditable="true" class="text-[11.5px] font-extrabold accent-color mb-1.5 leading-snug">${slide.rightTitle}</div>
+            <ul class="space-y-1">${rightList}</ul>
+          </div>
+        </div>
+      `;
+    } else {
+      const stepsHTML = (slide.steps || []).map((st, sIdx) => `
+        <div class="flex items-start gap-2.5">
+          <span class="pill-tag text-[10px] font-mono font-bold shrink-0">0${sIdx + 1}</span>
+          <p contenteditable="true" class="text-[11.5px] font-semibold leading-snug">${st}</p>
+        </div>
+      `).join('');
+      middleBody = `
+        <div class="my-auto py-1 flex flex-col gap-3">
+          <div class="flex flex-col items-start gap-1.5">
+            <span contenteditable="true" class="pill-tag text-[10.5px] font-bold">${slide.tag}</span>
+            <h2 contenteditable="true" class="text-[17.5px] font-black leading-snug">${slide.title}</h2>
+          </div>
+          ${imgBlock}
+          <div class="sub-box rounded-xl p-3.5 space-y-2.5">
+            ${stepsHTML}
+          </div>
+          <div class="sub-box rounded-xl p-2.5">
+            <p contenteditable="true" class="text-[11px] font-bold accent-color leading-snug">${slide.ctaQuestion}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div id="${cardId}" onclick="activeSlideIndex=${pageIndex}" class="slide-card ${currentTheme} rounded-2xl p-6 flex flex-col justify-between shadow-2xl">
+        ${topHeader}
+        ${middleBody}
+        ${bottomFooter}
+      </div>
+    `;
+  }
+
+  function renderActiveSlide() {
+    const container = document.getElementById('slidesContainer');
+    const slides = currentPostData.slides || [];
+    if (slideViewMode === 'row') {
+      container.innerHTML = slides.map((s, idx) => buildSlideHTML(s, idx, slides.length, `slideCard_${idx}`)).join('');
+    } else {
+      const slide = slides[activeSlideIndex] || slides[0];
+      container.innerHTML = buildSlideHTML(slide, activeSlideIndex, slides.length, 'activeSlideCard');
+    }
+  }
+
+  async function captureElementToDataURL(el) {
+    if (window.htmlToImage && typeof window.htmlToImage.toPng === 'function') {
+      try {
+        return await window.htmlToImage.toPng(el, {
+          pixelRatio: 3,
+          cacheBust: true,
+          width: 360,
+          height: 480
+        });
+      } catch (e) {
+        console.warn('html-to-image fallback to html2canvas', e);
+      }
+    }
+    const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: null });
+    return canvas.toDataURL('image/png');
+  }
+
+  function dataURLToBlob(dataURL) {
+    const parts = dataURL.split(',');
+    const mime = parts[0].match(/:(.*?);/)[1];
+    const bstr = atob(parts[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+  }
+
+  function getSlideFileName(index) {
+    const role = SLIDE_ROLE_NAMES[index] || `图${index + 1}`;
+    const shortTopic = sanitizeFilename(document.getElementById('activeTitleInput').value || '小红书笔记');
+    const num = String(index + 1).padStart(2, '0');
+    return `${num}_P${index + 1}_${role}_${shortTopic}.png`;
+  }
+
+  async function renderSlideIndexToDataURL(index) {
+    const existingEl = document.getElementById(`slideCard_${index}`);
+    if (existingEl) {
+      return await captureElementToDataURL(existingEl);
+    }
+    const stage = document.getElementById('offscreenCaptureStage');
+    const slides = currentPostData.slides || [];
+    stage.innerHTML = buildSlideHTML(slides[index], index, slides.length, `offscreenCard_${index}`);
+    await new Promise(r => setTimeout(r, 120));
+    const dataUrl = await captureElementToDataURL(stage.firstElementChild);
+    stage.innerHTML = '';
+    return dataUrl;
+  }
+
+  async function downloadCurrentSlide() {
+    const fileName = getSlideFileName(activeSlideIndex);
+    showToast(`正在导出 ${fileName}...`);
+    const dataUrl = await renderSlideIndexToDataURL(activeSlideIndex);
+    const link = document.createElement('a');
+    link.download = fileName;
+    link.href = dataUrl;
+    link.click();
+  }
+
+  async function downloadAsFolderZip() {
+    const slides = currentPostData.slides || [];
+    const folderName = getCurrentFolderName();
+    showToast(`正在创建文件夹「${folderName}」并渲染 5 张高清图...`);
+
+    const zip = new JSZip();
+    const folder = zip.folder(folderName);
+
+    const title = cleanMarkdownSymbols(document.getElementById('activeTitleInput').value.trim());
+    const body = cleanMarkdownSymbols(document.getElementById('articleBodyInput').value.trim());
+    const copyContent = `【小红书标题】\n${title}\n\n【小红书正文】\n${body}\n`;
+    folder.file(`00_小红书标题与正文.txt`, copyContent);
+
+    for (let i = 0; i < slides.length; i++) {
+      const dataUrl = await renderSlideIndexToDataURL(i);
+      const base64Data = dataUrl.split(',')[1];
+      const fileName = getSlideFileName(i);
+      folder.file(fileName, base64Data, { base64: true });
+    }
+
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    const link = document.createElement('a');
+    link.download = `${folderName}.zip`;
+    link.href = URL.createObjectURL(zipBlob);
+    link.click();
+
+    showToast(`✅ 已导出文件夹「${folderName}」（内含命好名的 01~05 配图 + 纯净文案.txt）！`);
+  }
+
+  async function exportToDirectLocalFolder() {
+    if (!window.showDirectoryPicker) {
+      showToast('当前浏览器不支持直写目录，已自动切换为打包文件夹下载...');
+      return downloadAsFolderZip();
+    }
+    try {
+      const rootDirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+      const slides = currentPostData.slides || [];
+      const folderName = getCurrentFolderName();
+      showToast(`正在你的目录中创建「${folderName}」并写入文件...`);
+
+      const subDirHandle = await rootDirHandle.getDirectoryHandle(folderName, { create: true });
+
+      const title = cleanMarkdownSymbols(document.getElementById('activeTitleInput').value.trim());
+      const body = cleanMarkdownSymbols(document.getElementById('articleBodyInput').value.trim());
+      const txtFileHandle = await subDirHandle.getFileHandle('00_小红书标题与正文.txt', { create: true });
+      const txtWritable = await txtFileHandle.createWritable();
+      await txtWritable.write(`【小红书标题】\n${title}\n\n【小红书正文】\n${body}\n`);
+      await txtWritable.close();
+
+      for (let i = 0; i < slides.length; i++) {
+        const dataUrl = await renderSlideIndexToDataURL(i);
+        const blob = dataURLToBlob(dataUrl);
+        const fileName = getSlideFileName(i);
+        const imgFileHandle = await subDirHandle.getFileHandle(fileName, { create: true });
+        const imgWritable = await imgFileHandle.createWritable();
+        await imgWritable.write(blob);
+        await imgWritable.close();
+      }
+
+      showToast(`🎉 已直接在你选定的目录下生成文件夹「${folderName}」！`);
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.error(err);
+        downloadAsFolderZip();
+      }
+    }
+  }
+
+  async function generateFullPost() {
+    const topic = document.getElementById('inputTopicTitle').value.trim();
+    const raw = document.getElementById('inputRawText').value.trim();
+    if (!topic && !raw) {
+      showToast('请先输入选题关键词或粘贴一段原始素材！');
+      return;
+    }
+    const coreTitle = cleanMarkdownSymbols(topic || (raw.slice(0, 28).replace(/\n/g, ' ')));
+    const cleanRaw = cleanMarkdownSymbols(raw || `外网关于 ${coreTitle} 的最新高赞讨论。`);
+    const sentences = cleanRaw.split(/(?<=[.?!。？！])\s+/).filter(Boolean);
+    const point1 = sentences[0] || cleanRaw.slice(0, 110);
+    const point2 = sentences[1] || '大家讨论的焦点已经从单纯看热闹，变成了怎么真正在日常干活里用起来。';
+    const point3 = sentences[2] || '早一点摸清工具脾气的人，能省下不少重复折腾的时间。';
+
+    currentPostData = {
+      id: 'custom-' + Date.now(),
+      topicTitle: coreTitle,
+      sourceMeta: '外网一手资讯整理',
+      rawSnippet: cleanRaw,
+      titles: [
+        `${coreTitle.slice(0, 11)}：外网真实反馈`,
+        `大白话聊透${coreTitle.slice(0, 9)}！到底好不好用`,
+        `外网刷屏的${coreTitle.slice(0, 8)}，帮你省流完了`,
+        `扒完评论区，聊聊${coreTitle.slice(0, 8)}的实在话`
+      ],
+      slides: [
+        {
+          type: 'cover',
+          tag: '外网一手资讯 · 省流整理',
+          headline: `扒完外网原帖，用大白话把<span class="hl-mark">${coreTitle.slice(0, 12)}</span>聊透`,
+          subhead: `外网最新高赞讨论：不吹不黑，3 分钟看懂核心重点与真实体验`,
+          footerMetric: `一句话总结：看清真实优缺点，按自己的需求挑着用就对了`
+        },
+        {
+          type: 'quote',
+          tag: '01 / 原帖说了什么',
+          sourceTitle: '外网高赞讨论原话',
+          sourceTime: 'Latest Thread',
+          enText: `"${cleanRaw.slice(0, 190)}${cleanRaw.length > 190 ? '...' : ''}"`,
+          cnHighlight: `💡 大白话翻译：关于「${coreTitle}」，大家最真实的感受是——${point1.slice(0, 85)}`,
+          takeaway: '真实反馈：跳过夸张宣传，直接看一线用过的人怎么说。'
+        },
+        {
+          type: 'points',
+          tag: '02 / 3 个核心重点',
+          title: `关于「${coreTitle.slice(0, 12)}」最值得关注的 3 件事`,
+          items: [
+            { num: '01', name: '核心变化在哪', desc: point1.slice(0, 80) },
+            { num: '02', name: '真实的优缺点', desc: point2.slice(0, 80) },
+            { num: '03', name: '对咱们有什么用', desc: point3.slice(0, 80) }
+          ]
+        },
+        {
+          type: 'compare',
+          tag: '03 / 前后对比',
+          title: '宣传里的样子 vs 实际用起来的样子',
+          leftTitle: '👀 宣传通稿常说的',
+          leftItems: [
+            '吹得神乎其神，好像明天就能替代一切',
+            '只放最完美的演示，绝口不提翻车情况',
+            '动不动制造焦虑让人跟风'
+          ],
+          rightTitle: '🎯 实际用起来的感受',
+          rightItems: [
+            '在特定环节确实很省事，但还得人来把关',
+            '摸清它的脾气后，能帮日常干活省下不少时间',
+            '当成一个顺手的工具，心态最稳'
+          ]
+        },
+        {
+          type: 'action',
+          tag: '04 / 给普通人的实在建议',
+          title: '看完这篇可以直接做的 3 件事',
+          steps: [
+            `拿手头的一件小事试试「${coreTitle.slice(0, 10)}」到底顺不顺手`,
+            '好用的地方留下来当固定习惯，不好用的地方别硬凑',
+            '关注真实用户的踩坑经验，少走弯路'
+          ],
+          ctaQuestion: `💬 聊聊：你对「${coreTitle.slice(0, 10)}」怎么看？平时用过类似工具吗？`
+        }
+      ],
+      articleBody: `最近在外网刷到不少关于「${coreTitle}」的讨论，热度挺高。\n\n看了一圈，我把原帖和评论区最实在的几条反馈整理了出来，给大家做个省流：\n\n📌 一、 原帖核心聊了啥？\n\n💬 ${cleanRaw.slice(0, 180)}\n\n💡 二、 三个实在重点\n\n1️⃣ ${point1}\n2️⃣ ${point2}\n3️⃣ ${point3}\n\n#AI日常 #外网搬运 #科技分享 #实用工具`
+    };
+    loadScenarioIntoStudio(currentPostData);
+    showToast('✨ 已重新生成全套 5 张图卡与纯净正文！');
+  }
+
+  async function fetchLiveRadar() {
+    const query = document.getElementById('radarSearchQuery').value.trim() || 'AI';
+    const source = document.getElementById('radarSourceSelect').value;
+    const statusEl = document.getElementById('liveRadarStatus');
+    const gridEl = document.getElementById('liveRadarGrid');
+
+    statusEl.innerText = `🔄 正在实时抓取外网最新讨论 (${source})...`;
+
+    try {
+      let items = [];
+      if (source.startsWith('hn_')) {
+        const endpoint = source === 'hn_hot'
+          ? `https://hn.algolia.com/api/v1/search?tags=story&query=${encodeURIComponent(query)}&hitsPerPage=12`
+          : `https://hn.algolia.com/api/v1/search_by_date?tags=story&query=${encodeURIComponent(query)}&hitsPerPage=12`;
+        const res = await fetch(endpoint);
+        const data = await res.json();
+        items = (data.hits || []).map(h => ({
+          title: h.title,
+          url: h.url || `https://news.ycombinator.com/item?id=${h.objectID}`,
+          points: h.points || 0,
+          comments: h.num_comments || 0,
+          sourceName: 'Hacker News (实时)',
+          snippet: `Hacker News 最新讨论：${h.title} (当前热度 ${h.points || 0} 赞 / ${h.num_comments || 0} 条评论)。`
+        }));
+      } else {
+        const subMap = {
+          reddit_localllama: 'LocalLLaMA',
+          reddit_singularity: 'singularity',
+          reddit_ai: 'ArtificialIntelligence'
+        };
+        const sub = subMap[source] || 'LocalLLaMA';
+        const res = await fetch(`https://www.reddit.com/r/${sub}/hot.json?limit=12`);
+        const data = await res.json();
+        items = (data.data.children || []).map(c => c.data).filter(d => !d.stickied).map(d => ({
+          title: d.title,
+          url: `https://www.reddit.com${d.permalink}`,
+          points: d.ups || 0,
+          comments: d.num_comments || 0,
+          sourceName: `Reddit r/${sub}`,
+          snippet: (d.selftext || d.title).slice(0, 500)
+        }));
+      }
+
+      if (!items.length) throw new Error('Empty feed');
+
+      statusEl.innerText = `✅ 已实时同步 ${items.length} 条外网最新线索：`;
+      gridEl.innerHTML = items.map((item) => `
+        <div class="bg-[#0B0D13] border border-white/10 hover:border-rose-500/50 rounded-2xl p-4 flex flex-col justify-between transition group">
+          <div>
+            <div class="flex items-center justify-between text-[11px] mb-2">
+              <span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-400 font-bold">${item.sourceName}</span>
+              <span class="font-mono text-slate-400">🔥 ${item.points} 赞 · 💬 ${item.comments} 评</span>
+            </div>
+            <h3 class="text-xs font-bold text-white leading-relaxed mb-2 group-hover:text-rose-300 transition">${item.title}</h3>
+            <p class="text-[11px] text-slate-400 line-clamp-3 leading-relaxed mb-3">${item.snippet}</p>
+          </div>
+          <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+            <a href="${item.url}" target="_blank" class="text-[11px] text-slate-500 hover:text-slate-300 underline">查看外网原帖 ↗</a>
+            <button onclick='importRadarItem(${JSON.stringify(item).replace(/'/g, "&#39;")})' class="px-3 py-1.5 rounded-lg xhs-gradient text-white text-[11px] font-bold shadow transition">
+              ⚡ 一键写成小红书图文
+            </button>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) {
+      statusEl.innerText = `💡 实时接口受本地网络环境影响，已为你展示预置热点：`;
+    }
+  }
+
+  function importRadarItem(item) {
+    document.getElementById('inputTopicTitle').value = item.title;
+    document.getElementById('inputRawText').value = item.snippet;
+    setMainTab('workspace');
+    generateFullPost();
+  }
+
+  function loadSettingsToInputs() {
+    document.getElementById('cfgAuthorName').value = brandConfig.authorName;
+    document.getElementById('cfgAuthorBio').value = brandConfig.authorBio;
+    document.getElementById('cfgIssueTag').value = brandConfig.issueTag;
+  }
+
+  function saveSettings() {
+    brandConfig.authorName = document.getElementById('cfgAuthorName').value.trim() || 'akia';
+    brandConfig.authorBio = document.getElementById('cfgAuthorBio').value.trim() || '外网搬运 ｜ AI八卦 ｜ 工具推荐';
+    brandConfig.issueTag = document.getElementById('cfgIssueTag').value.trim() || 'OVERSEAS AI · 外网一手资讯';
+
+    localStorage.setItem('rp_authorName', brandConfig.authorName);
+    localStorage.setItem('rp_authorBio', brandConfig.authorBio);
+    localStorage.setItem('rp_issueTag', brandConfig.issueTag);
+
+    renderActiveSlide();
+    setMainTab('workspace');
+    showToast('✅ 已保存你的账号印记并同步至全部 5 张卡片！');
+  }
+</script>
 </body>
 </html>
